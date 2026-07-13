@@ -341,7 +341,7 @@
 
                         <hr class="my-4 border-secondary-subtle">
 
-                <!-- PRODUKT-TYP & STÜCKZAHL -->
+                        <!-- PRODUKT-TYP & STÜCKZAHL -->
                         <!-- PROJEKT-TYP ALS MEHRFACHAUSWAHL (CHECKBOXEN) -->
                         <div class="col-12 mb-4">
                             <div class="p-3 bg-light rounded-3 border-start border-magenta border-3 shadow-sm">
@@ -383,7 +383,8 @@
                                         <div class="form-check">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Gatefold_12" value="Ja" id="prodGate12">
-                                            <label class="form-check-label text-dark small" for="prodGate12">12" Gatefold
+                                            <label class="form-check-label text-dark small" for="prodGate12">12"
+                                                Gatefold
                                                 (Klappcover)</label>
                                         </div>
                                     </div>
@@ -523,7 +524,8 @@
                                 <div class="form-check mb-0 border-top border-secondary-subtle pt-2 mt-2">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Verarbeitung_Inside_Out" value="Ja" id="procInsideOut">
-                                    <label class="form-check-label text-dark small" for="procInsideOut">Inside-Out-Druck (Raue Struktur
+                                    <label class="form-check-label text-dark small" for="procInsideOut">Inside-Out-Druck
+                                        (Raue Struktur
                                         nach außen)</label>
                                 </div>
                             </div>
@@ -572,12 +574,12 @@
                         </div>
 
                         <div class="col-12 mt-3">
-                            <label for="vUpload" class="form-label small fw-bold text-dark"
-                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Dateien anhängen
-                                (Bis 10 MB)</label>
-                            <input type="file" class="form-control bg-white text-dark py-2" name="Spezifikations-Datei"
-                                id="vUpload" accept=".pdf,.zip,.rar,.jpg,.png"
-                                style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important;">
+                            <label for="vStueck" class="form-label small fw-bold text-dark"
+                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Gewünschte
+                                Stückzahl</label>
+                            <input type="number" class="form-control bg-white text-dark py-2.5" name="Stueckzahl"
+                                id="vStueck" min="100" step="100" placeholder="Gewünschte Stückzahl (ab 100 Stück)"
+                                style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;">
                             <div class="form-text text-muted small mt-1">Erlaubt: PDF, ZIP, JPG, PNG</div>
                         </div>
 
@@ -616,24 +618,24 @@
                     </div>
                 </form>
 
-        </form>
+                </form>
 
-        <!-- VINYL-KONTAKT -->
-        <div class="mt-4 pt-3 border-top border-light text-center">
-            <p class="text-muted small mb-0">
-                Haben Sie Fragen zu den Maßen oder Spezifikationen?
-                <span class="d-block d-sm-inline mt-1 mt-sm-0 ms-sm-2">
-                    📞 <a href="tel:+493711234567" class="text-dark fw-bold text-decoration-none">0371 / 123 45
-                        67</a> &nbsp;|&nbsp; <br>
-                    ✉️ <a href="mailto:vinyl@goerner-druck.de"
-                        class="text-dark fw-bold text-decoration-none">vinyl@goerner-druck.de</a>
-                </span>
-            </p>
-            <small class="text-muted" style="font-size: 0.75rem;">Mo. – Fr. von 08:00 bis 16:00 Uhr
-                erreichbar</small>
-        </div>
+                <!-- VINYL-KONTAKT -->
+                <div class="mt-4 pt-3 border-top border-light text-center">
+                    <p class="text-muted small mb-0">
+                        Haben Sie Fragen zu den Maßen oder Spezifikationen?
+                        <span class="d-block d-sm-inline mt-1 mt-sm-0 ms-sm-2">
+                            📞 <a href="tel:+493711234567" class="text-dark fw-bold text-decoration-none">0371 / 123 45
+                                67</a> &nbsp;|&nbsp; <br>
+                            ✉️ <a href="mailto:vinyl@goerner-druck.de"
+                                class="text-dark fw-bold text-decoration-none">vinyl@goerner-druck.de</a>
+                        </span>
+                    </p>
+                    <small class="text-muted" style="font-size: 0.75rem;">Mo. – Fr. von 08:00 bis 16:00 Uhr
+                        erreichbar</small>
+                </div>
 
-        </div>
+            </div>
         </div>
     </section>
 
