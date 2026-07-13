@@ -15,7 +15,7 @@
 <body>
 
 
-   <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand text-uppercase fw-bold tracking-wide" href="index.html">
                 <img src="img/Logo_transparent.png" alt="Druckerei Oskar Görner GmbH Logo"
@@ -40,8 +40,10 @@
                         </div>
                         <ul class="dropdown-menu dropdown-menu-dark">
                             <li><a class="dropdown-menu-item" href="sites/vinyl/formate.html">Formate</a></li>
-                            <li><a class="dropdown-menu-item" href="sites/produktion/weiterverarbeitung.html#veredelung">Veredelung</a></li>
-                            <li><a class="dropdown-menu-item text-magenta fw-bold" href="sites/vinyl/vinyl.html#vinyl-konfigurator">Anfrage Vinyl</a></li>
+                            <li><a class="dropdown-menu-item"
+                                    href="sites/produktion/weiterverarbeitung.html#veredelung">Veredelung</a></li>
+                            <li><a class="dropdown-menu-item text-magenta fw-bold"
+                                    href="sites/vinyl/vinyl.html#vinyl-konfigurator">Anfrage Vinyl</a></li>
                         </ul>
                     </li>
 
@@ -56,10 +58,14 @@
                             </span>
                         </div>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-menu-item" href="sites/produktion/print.html#offsetdruck">Offsetdruck</a></li>
-                            <li><a class="dropdown-menu-item" href="sites/produktion/print.html#digitaldruck">Digitaldruck</a></li>
-                            <li><a class="dropdown-menu-item" href="sites/produktion/weiterverarbeitung.html">Weiterverarbeitung</a></li>
-                            <li><a class="dropdown-menu-item" href="sites/produktion/weiterverarbeitung.html#veredelung">Veredelung</a></li>
+                            <li><a class="dropdown-menu-item"
+                                    href="sites/produktion/print.html#offsetdruck">Offsetdruck</a></li>
+                            <li><a class="dropdown-menu-item"
+                                    href="sites/produktion/print.html#digitaldruck">Digitaldruck</a></li>
+                            <li><a class="dropdown-menu-item"
+                                    href="sites/produktion/weiterverarbeitung.html">Weiterverarbeitung</a></li>
+                            <li><a class="dropdown-menu-item"
+                                    href="sites/produktion/weiterverarbeitung.html#veredelung">Veredelung</a></li>
                         </ul>
                     </li>
 
@@ -110,9 +116,16 @@
 
                             <!-- Die beiden Buttons direkt unter dem Text -->
                             <div class="d-flex justify-content-center justify-content-lg-start gap-3 mt-4">
-                                <a href="sites/produktion/print.html"
-                                    class="btn btn-magenta px-4 py-2 fw-semibold">Print</a>
-                                <a href="sites/vinyl/vinyl.html" class="btn btn-outline-light px-4 py-2">Vinyl</a>
+                                <a href="#kontakt"
+                                    class="btn btn-magenta px-4 py-2.5 fw-bold text-uppercase tracking-wide shadow-sm"
+                                    style="font-size: 0.95rem;">
+                                    Druckprojekt starten
+                                </a>
+                                <a href="sites/vinyl/vinyl.html#vinyl-konfigurator"
+                                    class="btn btn-outline-light px-4 py-2.5 fw-bold text-uppercase tracking-wide transition-card"
+                                    style="font-size: 0.95rem;">
+                                    Vinyl konfigurieren
+                                </a>
                             </div>
                         </div>
 
@@ -461,17 +474,21 @@
                                 </h4>
                                 <p class="text-muted small mb-0 d-none d-sm-block">Kastentaschen &amp; Gatefolds.</p>
                             </div>
-                            <div class="text-end ps-3 border-start border-secondary-subtle flex-grow-1"
+                            <div class="text-end ps-3 border-start border-secondary-subtle flex-grow-1 d-flex flex-column align-items-end justify-content-center"
                                 style="line-height: 1.4; font-size: 0.9rem; width: 60%;">
                                 <p class="mb-1 fw-bold text-dark">Louisa Kaszuba</p>
                                 <p class="mb-1"><a href="tel:+49371529126"
                                         class="text-decoration-none text-muted text-magenta-hover fw-medium">📞 +49 371
                                         5291 26</a></p>
-                                <p class="mb-1"><a href="mailto:vinyl@druckerei-goerner.de"
+                                <p class="mb-2"><a href="mailto:vinyl@druckerei-goerner.de"
                                         class="text-decoration-none text-muted text-magenta-hover fw-medium text-break">✉️
                                         vinyl@druckerei-goerner.de</a></p>
-                                <p class="mb-0"><a href="sites/vinyl/vinyl.html#vinyl-konfigurator"
-                                        class="text-decoration-underline text-magenta fw-bold">🎚️ Vinyl anfragen</a></p>
+
+                                <a href="sites/vinyl/vinyl.html#vinyl-konfigurator"
+                                    class="btn btn-magenta btn-sm px-3 py-1.5 fw-bold text-uppercase tracking-wide w-100 w-sm-auto"
+                                    style="font-size: 0.75rem; border-radius: 4px;">
+                                    Vinyl anfragen
+                                </a>
                             </div>
                         </div>
 
@@ -618,8 +635,10 @@
                 <div class="modal-body">
                     <div class="fs-1 text-magenta mb-2">✓</div>
                     <h4 class="fw-bold mb-2 text-dark">Danke!</h4>
-                    <p class="text-muted mb-4">Ihre Nachricht wurde erfolgreich übermittelt. Wir werden uns schnellstmöglich bei Ihnen melden.</p>
-                    <button type="button" class="btn btn-magenta px-4 py-2 fw-semibold" data-bs-dismiss="modal">Schließen</button>
+                    <p class="text-muted mb-4">Ihre Nachricht wurde erfolgreich übermittelt. Wir werden uns
+                        schnellstmöglich bei Ihnen melden.</p>
+                    <button type="button" class="btn btn-magenta px-4 py-2 fw-semibold"
+                        data-bs-dismiss="modal">Schließen</button>
                 </div>
             </div>
         </div>
