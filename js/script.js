@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
     // ==========================================================================
     // 1. INTRO ANIMATION TRIGGERS (Fehlersicher gekapselt)
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (modernMachine) {
             modernMachine.style.opacity = "1";
             modernMachine.style.transform = "scale(1)";
-            
+
             const cylinders = modernMachine.querySelectorAll('.print-cylinder');
             if (cylinders.length > 0) {
                 // Zünde die Zylinder nacheinander durch Klassen-Aktivierung
@@ -42,23 +42,23 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             // Maus-Effekt: Farb-Dunst ausstoßen
-            modernMachine.addEventListener('mouseenter', function() {
+            modernMachine.addEventListener('mouseenter', function () {
                 const colors = ['#00ffff', '#ff007f', '#ffff00'];
                 for (let i = 0; i < 6; i++) {
                     const mist = document.createElement('div');
                     mist.className = 'dynamic-ink-mist';
                     mist.style.backgroundColor = colors[i % colors.length];
-                    
+
                     const angle = Math.random() * Math.PI * 2;
                     const velocity = 60 + Math.random() * 80;
                     const x = Math.cos(angle) * velocity;
                     const y = Math.sin(angle) * velocity;
-                    
+
                     mist.style.setProperty('--x', `${x}px`);
                     mist.style.setProperty('--y', `${y}px`);
-                    
+
                     modernMachine.appendChild(mist);
-                    
+
                     setTimeout(() => { mist.remove(); }, 1400);
                 }
             });
@@ -80,24 +80,24 @@ document.addEventListener("DOMContentLoaded", function() {
         if (targetCards.length === 0 || hotspotPins.length === 0) return;
         targetCards.forEach(card => card.classList.remove('card-active'));
         hotspotPins.forEach(pin => pin.classList.remove('pin-active'));
-        
+
         const activeCard = document.querySelector(`.hotspot-target-card[data-card-index="${index}"]`);
         const activePin = document.querySelector(`.hotspot-pin[data-target-index="${index}"]`);
-        
+
         if (activeCard) activeCard.classList.add('card-active');
         if (activePin) activePin.classList.add('pin-active');
     }
 
     if (hotspotPins.length > 0 && targetCards.length > 0) {
         hotspotPins.forEach(pin => {
-            pin.addEventListener('mouseenter', function() {
+            pin.addEventListener('mouseenter', function () {
                 const index = this.getAttribute('data-target-index');
                 activateHotspotElement(index);
             });
         });
 
         targetCards.forEach(card => {
-            card.addEventListener('mouseenter', function() {
+            card.addEventListener('mouseenter', function () {
                 const index = this.getAttribute('data-card-index');
                 activateHotspotElement(index);
             });
@@ -112,20 +112,20 @@ document.addEventListener("DOMContentLoaded", function() {
     const hoverTargets = document.querySelectorAll('.hover-target');
     if (hoverTargets.length > 0) {
         hoverTargets.forEach(target => {
-            target.addEventListener('mouseenter', function() {
+            target.addEventListener('mouseenter', function () {
                 const imgIndex = parseInt(this.getAttribute('data-img-index'), 10);
                 const parentRow = this.closest('.row');
                 if (!parentRow) return;
-                
+
                 parentRow.querySelectorAll('.hover-target').forEach(card => card.classList.remove('card-active'));
                 this.classList.add('card-active');
-                
+
                 const carouselEl = parentRow.querySelector('.carousel');
                 if (carouselEl && typeof bootstrap !== 'undefined') {
-                    carouselEl.classList.remove('slide'); 
+                    carouselEl.classList.remove('slide');
                     const carouselInstance = bootstrap.Carousel.getInstance(carouselEl) || new bootstrap.Carousel(carouselEl);
                     carouselInstance.to(imgIndex);
-                    
+
                     setTimeout(() => { carouselEl.classList.add('slide'); }, 50);
                 }
             });
@@ -138,10 +138,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const hoverDropdowns = document.querySelectorAll('.hover-dropdown');
     if (hoverDropdowns.length > 0) {
         hoverDropdowns.forEach(dropdown => {
-            dropdown.addEventListener('mouseenter', function() {
+            dropdown.addEventListener('mouseenter', function () {
                 if (window.innerWidth >= 992) { this.classList.add('show'); }
             });
-            dropdown.addEventListener('mouseleave', function() {
+            dropdown.addEventListener('mouseleave', function () {
                 if (window.innerWidth >= 992) { this.classList.remove('show'); }
             });
         });
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const mobileArrows = document.querySelectorAll('.mobile-arrow');
     if (mobileArrows.length > 0) {
         mobileArrows.forEach(arrow => {
-            arrow.addEventListener('click', function(e) {
+            arrow.addEventListener('click', function (e) {
                 e.preventDefault(); e.stopPropagation();
                 const parentLi = this.closest('.mobile-split-dropdown');
                 if (!parentLi) return;
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
 
-        document.addEventListener('click', function() {
+        document.addEventListener('click', function () {
             document.querySelectorAll('.mobile-split-dropdown').forEach(li => { li.classList.remove('show'); });
         });
     }
@@ -200,18 +200,18 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (photoStack) { photoStack.addEventListener('click', cyclePhotos); }
-    if (btnNextPhoto) { btnNextPhoto.addEventListener('click', function(e) { e.stopPropagation(); cyclePhotos(); }); }
+    if (btnNextPhoto) { btnNextPhoto.addEventListener('click', function (e) { e.stopPropagation(); cyclePhotos(); }); }
 
     // ==========================================================================
-    // 7. KONTAKTFORMULAR BESTÄTIGUNG (Bereinigter AJAX-Versand + Modal Pop-up)
+    // 7. KONTAKTFORMULAR BESTÄTIGUNG (Bereinigter AJAX-Versand + Fehler-Fallback)
     // ==========================================================================
     const contactForm = document.getElementById("contactForm");
     const submitBtn = document.getElementById("submitBtn");
 
     if (contactForm) {
-        contactForm.addEventListener("submit", function(event) {
-            event.preventDefault(); 
-            
+        contactForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.textContent = "Wird gesendet...";
@@ -226,29 +226,32 @@ document.addEventListener("DOMContentLoaded", function() {
                     'Accept': 'application/json'
                 }
             })
-            .then(response => {
-                if (response.ok) {
-                    if (typeof bootstrap !== 'undefined') {
-                        const thankYouModalEl = document.getElementById('thankYouModal');
-                        const thankYouModal = new bootstrap.Modal(thankYouModalEl);
-                        thankYouModal.show();
+                .then(response => {
+                    if (response.ok) {
+                        // Das Danke-Popup öffnet sich NUR hier, wenn das Formular erfolgreich versendet wurde
+                        if (typeof bootstrap !== 'undefined') {
+                            const thankYouModalEl = document.getElementById('thankYouModal');
+                            const thankYouModal = new bootstrap.Modal(thankYouModalEl);
+                            thankYouModal.show();
+                        } else {
+                            alert("Danke! Ihre Nachricht wurde erfolgreich übermittelt. Wir melden uns bei Ihnen.");
+                        }
+                        contactForm.reset();
                     } else {
-                        alert("Danke! Ihre Nachricht wurde erfolgreich übermittelt. Wir melden uns bei Ihnen.");
+                        // Fehler-Info, falls der Server streikt
+                        alert("Hoppla! Es gab ein Problem beim Absenden. Bitte senden Sie uns Ihre Anfrage direkt per E-Mail an: info@druckerei-goerner.de");
                     }
-                    contactForm.reset();
-                } else {
-                    alert("Hoppla! Es gab ein Problem beim Absenden. Bitte versuchen Sie es erneut.");
-                }
-            })
-            .catch(error => {
-                alert("Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.");
-            })
-            .finally(() => {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "Anfrage senden";
-                }
-            });
+                })
+                .catch(error => {
+                    // Fehler-Info bei Netzwerk- oder Verbindungsfehlern
+                    alert("Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung oder senden Sie uns Ihre Anfrage direkt per E-Mail an: info@druckerei-goerner.de");
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = "Anfrage senden";
+                    }
+                });
         });
     }
 
@@ -272,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (interactiveCover && spineButtons.length > 0) {
         spineButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 spineButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
                 const thickness = this.getAttribute('data-thickness');
@@ -300,9 +303,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const vSubmitBtn = document.getElementById("vSubmitBtn");
 
     if (vinylForm) {
-        vinylForm.addEventListener("submit", function(event) {
-            event.preventDefault(); 
-            
+        vinylForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
             if (vSubmitBtn) {
                 vSubmitBtn.disabled = true;
                 vSubmitBtn.textContent = "Wird gesendet...";
@@ -319,28 +322,28 @@ document.addEventListener("DOMContentLoaded", function() {
                     // WICHTIG: Kein Content-Type Header bei Datei-Uploads!
                 }
             })
-            .then(response => {
-                if (response.ok) {
-                    if (typeof bootstrap !== 'undefined') {
-                        const thankYouModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
-                        thankYouModal.show();
+                .then(response => {
+                    if (response.ok) {
+                        if (typeof bootstrap !== 'undefined') {
+                            const thankYouModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
+                            thankYouModal.show();
+                        } else {
+                            alert("Danke! Ihre Vinyl-Anfrage inklusive Datei wurde erfolgreich übermittelt.");
+                        }
+                        vinylForm.reset();
                     } else {
-                        alert("Danke! Ihre Vinyl-Anfrage inklusive Datei wurde erfolgreich übermittelt.");
+                        alert("Hoppla! Es gab ein Problem beim Hochladen. Ist die Datei eventuell zu groß?");
                     }
-                    vinylForm.reset();
-                } else {
-                    alert("Hoppla! Es gab ein Problem beim Hochladen. Ist die Datei eventuell zu groß?");
-                }
-            })
-            .catch(error => {
-                alert("Netzwerkfehler beim Datei-Upload. Bitte Verbindung prüfen.");
-            })
-            .finally(() => {
-                if (vSubmitBtn) {
-                    vSubmitBtn.disabled = false;
-                    vSubmitBtn.textContent = "Vinyl-Anfrage senden";
-                }
-            });
+                })
+                .catch(error => {
+                    alert("Netzwerkfehler beim Datei-Upload. Bitte Verbindung prüfen.");
+                })
+                .finally(() => {
+                    if (vSubmitBtn) {
+                        vSubmitBtn.disabled = false;
+                        vSubmitBtn.textContent = "Vinyl-Anfrage senden";
+                    }
+                });
         });
     }
 });

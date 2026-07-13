@@ -15,7 +15,7 @@
 <body>
 
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand text-uppercase fw-bold tracking-wide" href="index.html">
                 <img src="img/Logo_transparent.png" alt="Druckerei Oskar Görner GmbH Logo"
@@ -40,8 +40,8 @@
                         </div>
                         <ul class="dropdown-menu dropdown-menu-dark">
                             <li><a class="dropdown-menu-item" href="sites/vinyl/formate.html">Formate</a></li>
-                            <li><a class="dropdown-menu-item"
-                                    href="sites/produktion/weiterverarbeitung.html#veredelung">Veredelung</a></li>
+                            <li><a class="dropdown-menu-item" href="sites/produktion/weiterverarbeitung.html#veredelung">Veredelung</a></li>
+                            <li><a class="dropdown-menu-item text-magenta fw-bold" href="sites/vinyl/vinyl.html#vinyl-konfigurator">Anfrage Vinyl</a></li>
                         </ul>
                     </li>
 
@@ -56,14 +56,10 @@
                             </span>
                         </div>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><a class="dropdown-menu-item"
-                                    href="sites/produktion/print.html#offsetdruck">Offsetdruck</a></li>
-                            <li><a class="dropdown-menu-item"
-                                    href="sites/produktion/print.html#digitaldruck">Digitaldruck</a></li>
-                            <li><a class="dropdown-menu-item"
-                                    href="sites/produktion/weiterverarbeitung.html">Weiterverarbeitung</a></li>
-                            <li><a class="dropdown-menu-item"
-                                    href="sites/produktion/print.html#veredelung">Veredelung</a></li>
+                            <li><a class="dropdown-menu-item" href="sites/produktion/print.html#offsetdruck">Offsetdruck</a></li>
+                            <li><a class="dropdown-menu-item" href="sites/produktion/print.html#digitaldruck">Digitaldruck</a></li>
+                            <li><a class="dropdown-menu-item" href="sites/produktion/weiterverarbeitung.html">Weiterverarbeitung</a></li>
+                            <li><a class="dropdown-menu-item" href="sites/produktion/weiterverarbeitung.html#veredelung">Veredelung</a></li>
                         </ul>
                     </li>
 
@@ -471,9 +467,11 @@
                                 <p class="mb-1"><a href="tel:+49371529126"
                                         class="text-decoration-none text-muted text-magenta-hover fw-medium">📞 +49 371
                                         5291 26</a></p>
-                                <p class="mb-0"><a href="mailto:vinyl@druckerei-goerner.de"
+                                <p class="mb-1"><a href="mailto:vinyl@druckerei-goerner.de"
                                         class="text-decoration-none text-muted text-magenta-hover fw-medium text-break">✉️
                                         vinyl@druckerei-goerner.de</a></p>
+                                <p class="mb-0"><a href="sites/vinyl/vinyl.html#vinyl-konfigurator"
+                                        class="text-decoration-underline text-magenta fw-bold">🎚️ Vinyl anfragen</a></p>
                             </div>
                         </div>
 
@@ -613,23 +611,8 @@
         </div>
     </section>
 
+    <!-- Das echte Danke-Pop-up (wird standardmäßig versteckt) -->
     <div class="modal fade" id="thankYouModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered px-3">
-            <div class="modal-content bg-dark border border-magenta text-white text-center p-4">
-                <div class="modal-body">
-                    <div class="fs-1 text-magenta mb-2">✓</div>
-                    <h4 class="fw-bold mb-2">Danke!</h4>
-                    <p class="text-secondary-light mb-4">Ihre Nachricht wurde erfolgreich übermittelt. Wir werden uns
-                        schnellstmöglich bei Ihnen melden.</p>
-                    <button type="button" class="btn btn-magenta px-4 py-2 fw-semibold"
-                        data-bs-dismiss="modal">Schließen</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Das Pop-up (Bootstrap Modal bleibt identisch) -->
-    <div class=Erster "modal fade" id="thankYouModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered px-3">
             <div class="modal-content bg-white border border-magenta text-dark text-center p-4 shadow-lg">
                 <div class="modal-body">
@@ -641,7 +624,6 @@
             </div>
         </div>
     </div>
-
 
 
     <footer class="bg-black text-secondary py-4 fs-6 border-top border-secondary-dark">
