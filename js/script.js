@@ -10,11 +10,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const heroText = document.querySelector(".hero-text-entry");
         const modernMachine = document.getElementById("heroModernMachine");
 
+        // 1a. Wenn wir auf der VINYL-Unterseite sind (Rotierende Platte)
         if (vinylWrapper) {
             vinylWrapper.classList.add("loaded");
             setTimeout(() => { vinylWrapper.classList.add("spinning"); }, 2200);
         }
 
+        // 1b. Wenn wir auf der STARTSEITE (index.html) sind -> Flüssiges Ignition-Konzept
         if (modernMachine) {
             modernMachine.style.opacity = "1";
             modernMachine.style.transform = "scale(1)";
@@ -28,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
 
+            // Scanner fährt aus, sobald die Zylinder glühen
             const scanner = modernMachine.querySelector('.precision-scanner');
             if (scanner) {
                 setTimeout(() => {
@@ -37,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }, 1300);
             }
 
+            // Maus-Effekt: Farb-Dunst ausstoßen
             modernMachine.addEventListener('mouseenter', function () {
                 const colors = ['#00ffff', '#ff007f', '#ffff00'];
                 for (let i = 0; i < 6; i++) {
@@ -59,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
+        // Globale Elemente aktivieren
         if (workstationWrapper) { workstationWrapper.classList.add("loaded"); }
         if (packagingStage) { packagingStage.classList.add("loaded"); }
         if (heroText) { heroText.classList.add("visible"); }
@@ -199,7 +204,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================================================
     // 7. KONTAKTFORMULAR BESTÄTIGUNG (Görner CRM AJAX-Versand)
     // ==========================================================================
-   
     const contactForm = document.getElementById("contactForm");
     const submitBtn = document.getElementById("submitBtn");
 
@@ -214,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const formData = new FormData(this);
             const dataObject = {
-                formType: "kontakt", 
+                formType: "kontakt",
                 name: formData.get("Name"),
                 email: formData.get("Email"),
                 phone: formData.get("Telefon"),
@@ -224,10 +228,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             fetch(this.action, {
                 method: "POST",
-                redirect: "follow", 
+                redirect: "follow",
                 body: JSON.stringify(dataObject),
                 headers: {
-                    'Content-Type': 'text/plain;charset=utf-8' 
+                    'Content-Type': 'text/plain;charset=utf-8'
                 }
             })
             .then(response => response.json())
@@ -242,11 +246,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     contactForm.reset();
                 } else {
-                    alert("Es gab ein Problem im CRM: " + data.meldung); 
+                    alert("Es gab ein Problem im CRM: " + data.meldung);
                 }
             })
             .catch(error => {
-                // BUTTON WIEDER FREIGEBEN BEI WEITERLEITUNGS-BLOCKADE
                 if (typeof bootstrap !== 'undefined') {
                     const thankYouModalEl = document.getElementById('thankYouModal');
                     const thankYouModal = new bootstrap.Modal(thankYouModalEl);
@@ -258,7 +261,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.warn("Umleitung blockiert, aber Übertragung erfolgreich abgeschlossen.", error);
             })
             .finally(() => {
-                // Macht den Button verlässlich wieder klickbar
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.textContent = "Anfrage senden";
@@ -266,137 +268,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
-
-    // ... (Abschnitt 8 und 9 bleiben unverändert)
-
-    // ==========================================================================
-    // 10. VINYL-FORMULAR (Görner CRM) - BUTTON-FIX AKTIV
-    // ==========================================================================
-    const vinylForm = document.getElementById("vinylContactForm");
-    const vSubmitBtn = document.getElementById("vSubmitBtn");
-
-    if (vinylForm) {
-        vinylForm.addEventListener("submit", function (event) {
-            
-            const hatProdukt = [
-                "Produkt_Kastentasche_12", 
-                "Produkt_Kastentasche_10", 
-                "Produkt_Kastentasche_7",
-                "Produkt_Gatefold_12", 
-                "Produkt_Innentasche_12", 
-                "Produkt_Innentasche_10", 
-                "Produkt_Innentasche_7"
-            ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
-            });
-
-            const hatRuecken = [
-                "Ruecken_Ohne", 
-                "Ruecken_3mm", 
-                "Ruecken_5mm", 
-                "Ruecken_7mm", 
-                "Ruecken_10mm"
-            ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
-            });
-
-            const hatKarton = [
-                "Karton_Chromokarton", 
-                "Karton_Kraftkarton", 
-                "Karton_Graukarton", 
-                "Karton_Sulfatkarton"
-            ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
-            });
-
-            if (!hatProdukt || !hatRuecken || !hatKarton) {
-                event.preventDefault();
-                
-                let fehlerMeldung = "Bitte füllen Sie folgende Pflichtbereiche aus:\n";
-                if (!hatProdukt) fehlerMeldung += "• Mindestens einen Produkt-Typ auswählen\n";
-                if (!hatRuecken) fehlerMeldung += "• Mindestens eine Rückenbreite auswählen\n";
-                if (!hatKarton) fehlerMeldung += "• Mindestens eine Kartonsorte auswählen\n";
-                
-                alert(fehlerMeldung);
-                return;
-            }
-
-            event.preventDefault();
-
-            if (vSubmitBtn) {
-                vSubmitBtn.disabled = true;
-                vSubmitBtn.textContent = "Wird gesendet...";
-            }
-
-            const formData = new FormData(this);
-            const fileInput = document.getElementById("vFile");
-
-            const rueckenbreiten = [];
-            if (formData.get("Ruecken_Ohne")) rueckenbreiten.push("Ohne Rücken");
-            if (formData.get("Ruecken_3mm")) rueckenbreiten.push("3 mm");
-            if (formData.get("Ruecken_5mm")) rueckenbreiten.push("5 mm");
-            if (formData.get("Ruecken_7mm")) rueckenbreiten.push("7 mm");
-            if (formData.get("Ruecken_10mm")) rueckenbreiten.push("10 mm");
-            
-            const veredelungen = [];
-            if (formData.get("Veredelung_Heissfolie")) veredelungen.push("Heißfolienprägung");
-            if (formData.get("Veredelung_Lack")) veredelungen.push("Partielle Lackierung");
-            if (formData.get("Veredelung_Blindpraegung")) veredelungen.push("Blindprägung");
-            if (formData.get("Veredelung_Stanzung")) veredelungen.push("Präzisions-Stanzung");
-            if (formData.get("Veredelung_Spezialfarbe")) veredelungen.push("Spezialfarbe (Pantone/HKS)");
-
-            const kartonsorten = [];
-            if (formData.get("Karton_Chromokarton")) kartonsorten.push("Chromokarton");
-            if (formData.get("Karton_Kraftkarton")) kartonsorten.push("Kraftkarton");
-            if (formData.get("Karton_Graukarton")) kartonsorten.push("Graukarton");
-            if (formData.get("Karton_Sulfatkarton")) kartonsorten.push("Sulfatkarton");
-
-            const extrasList = [];
-            if (formData.get("Extra_Optimierte_Mittelloecher")) extrasList.push("Optimierte Mittellöcher");
-            if (formData.get("Extra_Zentrierte_Mittelloecher")) extrasList.push("Zentrierte Mittellöcher");
-            if (formData.get("Extra_Schallplatten_Labels")) extrasList.push("Labels");
-            if (formData.get("Extra_Einleger_Booklets")) extrasList.push("Einleger & Booklets");
-
-            const dataObject = {
-                formType: "vinyl",
-                firmaBand: formData.get("firmaBand") || "",
-                projektname: formData.get("projektname") || "",
-                name: formData.get("name") || "",
-                email: formData.get("email") || "",
-                phone: formData.get("phone") || "",
-                
-                Produkt_Kastentasche_12: formData.get("Produkt_Kastentasche_12") ? true : false,
-                Produkt_Kastentasche_10: formData.get("Produkt_Kastentasche_10") ? true : false,
-                Produkt_Kastentasche_7: formData.get("Produkt_Kastentasche_7") ? true : false,
-                Produkt_Gatefold_12: formData.get("Produkt_Gatefold_12") ? true : false,
-                Produkt_Innentasche_12: formData.get("Produkt_Innentasche_12") ? true : false,
-                Produkt_Innentasche_10: formData.get("Produkt_Innentasche_10") ? true : false,
-                Produkt_Innentasche_7: formData.get("Produkt_Innentasche_7") ? true : false,
-                
-                rueckenbreite: rueckenbreiten.join(", "),
-                veredelung: veredelungen.join(", "),
-                kartonsorte: kartonsorten.join(", "),
-                insideOut: formData.get("Verarbeitung_Inside_Out") ? true : false,
-                extras: extrasList.join(", "),
-                
-                stueckzahl: formData.get("stueckzahl") || "",
-                datenlink: formData.get("datenlink") || "", 
-                message: formData.get("message") || ""
-            };
-
-            function sendData(payload) {
-                fetch(vinylForm.action, {
-                    method: "POST",
-                    redirect: "follow",
-                    body: JSON.stringify(payload),
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    }
-                });
-            }
 
     // ==========================================================================
     // 8. VINYL FORMATE SLIDESHOWS (Abgesichert)
@@ -440,7 +311,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================================================
-    // 10. VINYL-FORMULAR MIT KORREKTEM ERFOLGS-POPUP IM CATCH-BLOCK
+    // 10. VINYL-FORMULAR MIT DATEI-UPLOAD & PRÜFUNG ALLER NEUEN CHECKBOXEN
     // ==========================================================================
     const vinylForm = document.getElementById("vinylContactForm");
     const vSubmitBtn = document.getElementById("vSubmitBtn");
@@ -448,6 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (vinylForm) {
         vinylForm.addEventListener("submit", function (event) {
             
+            // 1. Basis-Pflichtbereiche validieren
             const hatProdukt = [
                 "Produkt_Kastentasche_12", 
                 "Produkt_Kastentasche_10", 
@@ -482,13 +354,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 return element ? element.checked : false;
             });
 
-            if (!hatProdukt || !hatRuecken || !hatKarton) {
+            // 2. Neue Checkbox-Gruppen (Farbigkeit & Grammatur) validieren
+            const hatFarbigkeit = [
+                "Farbe_4c", 
+                "Farbe_1c", 
+                "Farbe_Sonder"
+            ].some(name => {
+                const element = vinylForm.querySelector(`[name="${name}"]`);
+                return element ? element.checked : false;
+            });
+
+            const hatGrammatur = [
+                "Gramm_180", 
+                "Gramm_300", 
+                "Gramm_350", 
+                "Gramm_Andere"
+            ].some(name => {
+                const element = vinylForm.querySelector(`[name="${name}"]`);
+                return element ? element.checked : false;
+            });
+
+            // Strenges Absende-Verbot, wenn eine Gruppe leer ist
+            if (!hatProdukt || !hatRuecken || !hatKarton || !hatFarbigkeit || !hatGrammatur) {
                 event.preventDefault();
                 
                 let fehlerMeldung = "Bitte füllen Sie folgende Pflichtbereiche aus:\n";
                 if (!hatProdukt) fehlerMeldung += "• Mindestens einen Produkt-Typ auswählen\n";
                 if (!hatRuecken) fehlerMeldung += "• Mindestens eine Rückenbreite auswählen\n";
                 if (!hatKarton) fehlerMeldung += "• Mindestens eine Kartonsorte auswählen\n";
+                if (!hatFarbigkeit) fehlerMeldung += "• Mindestens eine Farbigkeit auswählen\n";
+                if (!hatGrammatur) fehlerMeldung += "• Mindestens eine Grammatur auswählen\n";
                 
                 alert(fehlerMeldung);
                 return;
@@ -504,6 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const formData = new FormData(this);
             const fileInput = document.getElementById("vFile");
 
+            // Arrays befüllen
             const rueckenbreiten = [];
             if (formData.get("Ruecken_Ohne")) rueckenbreiten.push("Ohne Rücken");
             if (formData.get("Ruecken_3mm")) rueckenbreiten.push("3 mm");
@@ -530,6 +426,23 @@ document.addEventListener("DOMContentLoaded", function () {
             if (formData.get("Extra_Schallplatten_Labels")) extrasList.push("Labels");
             if (formData.get("Extra_Einleger_Booklets")) extrasList.push("Einleger & Booklets");
 
+            // Ausgewählte Farbigkeiten sammeln
+            const farbAuswahl = [];
+            if (formData.get("Farbe_4c")) farbAuswahl.push("4/4-farbig (CMYK)");
+            if (formData.get("Farbe_1c")) farbAuswahl.push("1/1-farbig (S/W)");
+            if (formData.get("Farbe_Sonder")) farbAuswahl.push("Sonderfarbe");
+
+            // Ausgewählte Grammaturen sammeln
+            const grammAuswahl = [];
+            if (formData.get("Gramm_180")) grammAuswahl.push("180 g/m²");
+            if (formData.get("Gramm_300")) grammAuswahl.push("300 g/m²");
+            if (formData.get("Gramm_350")) grammAuswahl.push("350 g/m²");
+            
+            const freitextGrammatur = formData.get("grammaturDetails") || "";
+            if (formData.get("Gramm_Andere")) {
+                grammAuswahl.push(freitextGrammatur.trim() !== "" ? freitextGrammatur : "Andere Grammatur");
+            }
+
             const dataObject = {
                 formType: "vinyl",
                 firmaBand: formData.get("firmaBand") || "",
@@ -549,6 +462,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 rueckenbreite: rueckenbreiten.join(", "),
                 veredelung: veredelungen.join(", "),
                 kartonsorte: kartonsorten.join(", "),
+                
+                farbigkeit: farbAuswahl.join(", ") || "Keine Auswahl",
+                sonderfarbeDetails: formData.get("sonderfarbeDetails") || "",
+                grammatur: grammAuswahl.join(", ") || "Keine Auswahl",
+                
                 insideOut: formData.get("Verarbeitung_Inside_Out") ? true : false,
                 extras: extrasList.join(", "),
                 
@@ -577,11 +495,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                         vinylForm.reset();
                     } else {
-                        alert("Es gab ein Problem im CRM: " + data.meldung); 
+                        alert("Es gab ein Problem im CRM: " + data.meldung);
                     }
                 })
                 .catch(error => {
-                    // KORRIGIERT: Da Google die Weiterleitung blockiert, schalten wir hier bei falschem Alarm direkt auf ERFOLG um!
                     if (typeof bootstrap !== 'undefined') {
                         const thankYouModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
                         thankYouModal.show();
@@ -589,9 +506,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         alert("Danke! Ihre Vinyl-Anfrage wurde erfolgreich übermittelt.");
                     }
                     vinylForm.reset();
-                    console.warn("Sicherheitsumleitung blockiert, Übermittlung an Tabelle trotzdem erfolgreich abgeschlossen.", error);
+                    console.warn("Sicherheitsumleitung blockiert, Übermittlung trotzdem erfolgreich.", error);
                 })
-                .then(() => {
+                .finally(() => {
                     if (vSubmitBtn) {
                         vSubmitBtn.disabled = false;
                         vSubmitBtn.textContent = "Spezifikations-Anfrage absenden";
@@ -614,8 +531,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const reader = new FileReader();
                 reader.readAsDataURL(selectedFile);
                 reader.onload = function () {
-                    dataObject.fileData = reader.result;
-                    dataObject.fileName = selectedFile.name;
+                    dataObject.fileData = reader.result; 
+                    dataObject.fileName = selectedFile.name; 
                     sendData(dataObject);
                 };
                 reader.onerror = function (error) {

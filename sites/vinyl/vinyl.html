@@ -302,7 +302,7 @@
                 </div>
 
                 <form id="vinylContactForm"
-                    action="https://script.google.com/macros/s/AKfycbwaNLoAoThzxeulzmBESVK8Zw7rBV_pHkInyIVOZq9UlC4w7qPHfOGSsOVsRi-CBIMe/exec"
+                    action="https://script.google.com/macros/s/AKfycbwWXkK3UhAdPnBWmlwrqgiBak1RFBaw3iB-Z6OvGKS0GauGzM-zpp5ldHC7lXj4K5Be/exec"
                     method="POST" enctype="multipart/form-data">
                     
                     <div class="row g-4">
@@ -468,11 +468,7 @@
                                     <label class="form-check-label text-dark small"
                                         for="verStanz">Präzisions-Stanzung</label>
                                 </div>
-                                <div class="form-check mb-0">
-                                    <input class="form-check-input border-secondary" type="checkbox"
-                                        name="Veredelung_Spezialfarbe" value="Ja" id="verFarbe">
-                                    <label class="form-check-label text-dark small" for="verFarbe">Spezialfarbe (Pantone / HKS-Schmuckfarben)</label>
-                                </div>
+                    
                             </div>
                         </div>
 
@@ -505,6 +501,70 @@
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Verarbeitung_Inside_Out" value="Ja" id="procInsideOut">
                                     <label class="form-check-label text-dark small" for="procInsideOut">Inside-Out-Druck (Raue Struktur nach außen)</label>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- GEWÜNSCHTE FARBIGKEIT (MEHRFACHAUSWAHL) -->
+                        <div class="col-12 col-md-6 mb-4">
+                            <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
+                                <label class="form-label small fw-bold text-dark d-block mb-3"
+                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Farbigkeit / Druck (Mehrfachauswahl möglich)</label>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input border-secondary" type="checkbox" name="Farbe_4c"
+                                        value="4/4-farbig (CMYK)" id="print4c">
+                                    <label class="form-check-label text-dark small" for="print4c">4/4-farbig CMYK (Standard Euroskala)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input border-secondary" type="checkbox" name="Farbe_1c"
+                                        value="1/1-farbig (Schwarz/Weiß)" id="print1c">
+                                    <label class="form-check-label text-dark small" for="print1c">1/1-farbig (Schwarz oder HKS/Pantone rein)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input border-secondary" type="checkbox" name="Farbe_Sonder"
+                                        value="Sonderfarbe / Schmuckfarbe" id="printSonder">
+                                    <label class="form-check-label text-dark small" for="printSonder">Zusätzliche Sonderfarbe (HKS / Pantone)</label>
+                                </div>
+                                <div class="mt-2" id="sonderfarbeInputContainer">
+                                    <label for="vSonderBeschreibung" class="form-label small text-muted mb-1">Welche Sonderfarbe? (z.B. Pantone 871 C Gold)</label>
+                                    <input type="text" class="form-control bg-white text-dark py-1.5" name="sonderfarbeDetails"
+                                        id="vSonderBeschreibung" placeholder="Farbnummer / Bezeichnung angeben"
+                                        style="border: 1px solid #94a3b8 !important; font-size: 0.95rem !important;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GRAMMATUR / MATERIALSTÄRKE (MEHRFACHAUSWAHL) -->
+                        <div class="col-12 col-md-6 mb-4">
+                            <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
+                                <label class="form-label small fw-bold text-dark d-block mb-3"
+                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Grammatur / Materialstärke (Mehrfachauswahl möglich)</label>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input border-secondary" type="checkbox" name="Gramm_180"
+                                        value="180 g/m²" id="gramm180">
+                                    <label class="form-check-label text-dark small" for="gramm180">180 g/m² (Ideal für Innersleeves / Innentaschen)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input border-secondary" type="checkbox" name="Gramm_300"
+                                        value="300 g/m²" id="gramm300">
+                                    <label class="form-check-label text-dark small" for="gramm300">300 g/m² Bogenoffset-Karton (Standard Außentasche)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input border-secondary" type="checkbox" name="Gramm_350"
+                                        value="350 g/m²" id="gramm350">
+                                    <label class="form-check-label text-dark small" for="gramm350">350 g/m² Premium-Karton (Extra stabil)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input border-secondary" type="checkbox" name="Gramm_Andere"
+                                        value="Andere Grammatur" id="grammAndere">
+                                    <label class="form-check-label text-dark small" for="grammAndere">Andere Stärke / Sonderkarton</label>
+                                </div>
+                                <div class="mt-2" id="grammaturInputContainer">
+                                    <label for="vGrammaturBeschreibung" class="form-label small text-muted mb-1">Gewünschte Grammatur angeben:</label>
+                                    <input type="text" class="form-control bg-white text-dark py-1.5" name="grammaturDetails"
+                                        id="vGrammaturBeschreibung" placeholder="z. B. 400 g/m² oder Graupappe"
+                                        style="border: 1px solid #94a3b8 !important; font-size: 0.95rem !important;">
                                 </div>
                             </div>
                         </div>
@@ -606,6 +666,25 @@
 
         </div>
     </section>
+
+    <div class="modal fade" id="thankYouModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered px-3">
+            <div class="modal-content bg-white border border-magenta text-dark text-center p-4 shadow-lg">
+                <div class="modal-body">
+                    <div class="fs-1 text-magenta mb-2">✓</div>
+                    <h4 class="fw-bold mb-2 text-dark">Anfrage erfolgreich übermittelt!</h4>
+                    <p class="text-muted mb-4">
+                        Vielen Dank für Ihre Anfrage. Wir haben Ihre Daten erfolgreich in unser System geladen. 
+                        <br><br>
+                        <strong>Hinweis:</strong> Sollten Sie innerhalb der nächsten <strong>48 Stunden</strong> keine Rückmeldung von uns erhalten, wenden Sie sich bitte direkt per E-Mail an uns unter: 
+                        <a href="mailto:vinyl@druckerei-goerner.de" class="text-magenta fw-bold text-decoration-none">vinyl@druckerei-goerner.de</a>.
+                    </p>
+                    <button type="button" class="btn btn-magenta px-4 py-2 fw-semibold"
+                        data-bs-dismiss="modal">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer class="bg-black text-secondary py-4 fs-6 border-top border-secondary-dark">
