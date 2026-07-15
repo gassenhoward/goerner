@@ -284,7 +284,8 @@
 
     <!-- ==========================================================================
    SEKTION: VINYL-SPEZIFIKATIONS-KONFIGURATOR (RÜCKENBREITE ALS CHECKBOXEN)
-   ========================================================================== -->
+    ========================================================================== -->
+
     <section id="vinyl-konfigurator" class="py-5 bg-light text-dark border-top border-light">
         <div class="container py-4">
 
@@ -300,117 +301,108 @@
                             class="text-dark">Mindestauflage: 100 Stück.</strong></p>
                 </div>
 
-                <form id="vinylContactForm" action="https://formsubmit.co/ajax/DEIN_ERHALTENER_CODE" method="POST"
-                    enctype="multipart/form-data">
-
-                    <input type="hidden" name="_captcha" value="false">
-                    <input type="text" name="_honey" style="display:none">
-
+                <form id="vinylContactForm"
+                    action="https://script.google.com/macros/s/AKfycbwaNLoAoThzxeulzmBESVK8Zw7rBV_pHkInyIVOZq9UlC4w7qPHfOGSsOVsRi-CBIMe/exec"
+                    method="POST" enctype="multipart/form-data">
+                    
                     <div class="row g-4">
 
-                        <!-- STAMMDATEN -->
-                        <div class="col-12 col-md-6">
+                        <!-- STAMMDATEN (Getrennte Felder für Band/Firma, Projektname & Ansprechpartner) -->
+                        <div class="col-12 col-md-4">
                             <label for="vFirma" class="form-label small fw-bold text-dark"
-                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Firma /
-                                Projektname</label>
-                            <input type="text" class="form-control bg-white text-dark py-2.5" name="Firma-Projekt"
-                                id="vFirma" placeholder="Name der Firma oder Band"
+                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Firma / Band</label>
+                            <input type="text" class="form-control bg-white text-dark py-2.5" name="firmaBand"
+                                id="vFirma" required placeholder="Name der Firma oder Band"
                                 style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;">
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-4">
+                            <label for="vProjekt" class="form-label small fw-bold text-dark"
+                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Projektname</label>
+                            <input type="text" class="form-control bg-white text-dark py-2.5" name="projektname"
+                                id="vProjekt" required placeholder="z. B. Albumtitel / EP"
+                                style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;">
+                        </div>
+                        <div class="col-12 col-md-4">
                             <label for="vName" class="form-label small fw-bold text-dark"
                                 style="font-weight: 700 !important; font-size: 1.05rem !important;">Ansprechpartner</label>
-                            <input type="text" class="form-control bg-white text-dark py-2.5" name="Ansprechpartner"
+                            <input type="text" class="form-control bg-white text-dark py-2.5" name="name"
                                 id="vName" required placeholder="Ihr Vor- und Nachname"
                                 style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;">
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="vEmail" class="form-label small fw-bold text-dark"
                                 style="font-weight: 700 !important; font-size: 1.05rem !important;">E-Mail-Adresse</label>
-                            <input type="email" class="form-control bg-white text-dark py-2.5" name="Email" id="vEmail"
+                            <input type="email" class="form-control bg-white text-dark py-2.5" name="email" id="vEmail"
                                 required placeholder="name@beispiel.de"
                                 style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;">
                         </div>
                         <div class="col-12 col-md-6">
                             <label for="vPhone" class="form-label small fw-bold text-dark"
                                 style="font-weight: 700 !important; font-size: 1.05rem !important;">Telefonnummer</label>
-                            <input type="tel" class="form-control bg-white text-dark py-2.5" name="Telefonnummer"
-                                id="vPhone" placeholder="Für eventuelle Rückfragen"
+                            <input type="tel" class="form-control bg-white text-dark py-2.5" name="phone"
+                                id="vPhone" required placeholder="Für eventuelle Rückfragen"
                                 style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;">
                         </div>
 
                         <hr class="my-4 border-secondary-subtle">
 
-                        <!-- PRODUKT-TYP & STÜCKZAHL -->
-                        <!-- PROJEKT-TYP ALS MEHRFACHAUSWAHL (CHECKBOXEN) -->
+                        <!-- PRODUKT-TYP -->
                         <div class="col-12 mb-4">
                             <div class="p-3 bg-light rounded-3 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
-                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Produkt-Typ
-                                    (Mehrfachauswahl möglich)</label>
+                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Produkt-Typ (Mehrfachauswahl möglich)</label>
 
                                 <div class="row">
                                     <!-- Kastentaschen -->
                                     <div class="col-12 col-sm-4 mb-3 mb-sm-0">
-                                        <span
-                                            class="d-block small fw-bold text-muted mb-2 text-uppercase tracking-wider"
+                                        <span class="d-block small fw-bold text-muted mb-2 text-uppercase tracking-wider"
                                             style="font-size: 0.75rem;">Kastentaschen</span>
                                         <div class="form-check mb-1">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Kastentasche_12" value="Ja" id="prodKaste12">
-                                            <label class="form-check-label text-dark small" for="prodKaste12">12"
-                                                Kastentasche</label>
+                                            <label class="form-check-label text-dark small" for="prodKaste12">12" Kastentasche</label>
                                         </div>
                                         <div class="form-check mb-1">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Kastentasche_10" value="Ja" id="prodKaste10">
-                                            <label class="form-check-label text-dark small" for="prodKaste10">10"
-                                                Kastentasche</label>
+                                            <label class="form-check-label text-dark small" for="prodKaste10">10" Kastentasche</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Kastentasche_7" value="Ja" id="prodKaste7">
-                                            <label class="form-check-label text-dark small" for="prodKaste7">7"
-                                                Kastentasche</label>
+                                            <label class="form-check-label text-dark small" for="prodKaste7">7" Kastentasche</label>
                                         </div>
                                     </div>
 
-                                    <!-- Gatefold (Neutral und ohne Untertext) -->
+                                    <!-- Gatefold -->
                                     <div class="col-12 col-sm-4 mb-3 mb-sm-0 border-start-md">
-                                        <span
-                                            class="d-block small fw-bold text-muted mb-2 text-uppercase tracking-wider"
+                                        <span class="d-block small fw-bold text-muted mb-2 text-uppercase tracking-wider"
                                             style="font-size: 0.75rem;">Gatefold</span>
                                         <div class="form-check">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Gatefold_12" value="Ja" id="prodGate12">
-                                            <label class="form-check-label text-dark small" for="prodGate12">12"
-                                                Gatefold
-                                                (Klappcover)</label>
+                                            <label class="form-check-label text-dark small" for="prodGate12">12" Gatefold (Klappcover)</label>
                                         </div>
                                     </div>
 
                                     <!-- Innentaschen -->
                                     <div class="col-12 col-sm-4">
-                                        <span
-                                            class="d-block small fw-bold text-muted mb-2 text-uppercase tracking-wider"
+                                        <span class="d-block small fw-bold text-muted mb-2 text-uppercase tracking-wider"
                                             style="font-size: 0.75rem;">Innentaschen</span>
                                         <div class="form-check mb-1">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Innentasche_12" value="Ja" id="prodIn12">
-                                            <label class="form-check-label text-dark small" for="prodIn12">12"
-                                                Innentasche</label>
+                                            <label class="form-check-label text-dark small" for="prodIn12">12" Innentasche</label>
                                         </div>
                                         <div class="form-check mb-1">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Innentasche_10" value="Ja" id="prodIn10">
-                                            <label class="form-check-label text-dark small" for="prodIn10">10"
-                                                Innentasche</label>
+                                            <label class="form-check-label text-dark small" for="prodIn10">10" Innentasche</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input border-secondary" type="checkbox"
                                                 name="Produkt_Innentasche_7" value="Ja" id="prodIn7">
-                                            <label class="form-check-label text-dark small" for="prodIn7">7"
-                                                Innentasche</label>
+                                            <label class="form-check-label text-dark small" for="prodIn7">7" Innentasche</label>
                                         </div>
                                     </div>
                                 </div>
@@ -421,8 +413,7 @@
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
-                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Gewünschte
-                                    Rückenbreite</label>
+                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Gewünschte Rückenbreite</label>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox" name="Ruecken_Ohne"
                                         value="Ja" id="spineOhne">
@@ -455,25 +446,21 @@
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-2"
-                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Gewünschte
-                                    Oberflächen-Veredelung</label>
+                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Gewünschte Oberflächen-Veredelung</label>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Veredelung_Heissfolie" value="Ja" id="verHeiss">
-                                    <label class="form-check-label text-dark small" for="verHeiss">Heißfolienprägung
-                                        (Gold, Silber, Metallic)</label>
+                                    <label class="form-check-label text-dark small" for="verHeiss">Heißfolienprägung (Gold, Silber, Metallic)</label>
                                 </div>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Veredelung_Lack" value="Ja" id="verLack">
-                                    <label class="form-check-label text-dark small" for="verLack">Partielle Lackierung
-                                        (UV-Spot- / Relieflack)</label>
+                                    <label class="form-check-label text-dark small" for="verLack">Partielle Lackierung (UV-Spot- / Relieflack)</label>
                                 </div>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Veredelung_Blindpraegung" value="Ja" id="verBlind">
-                                    <label class="form-check-label text-dark small" for="verBlind">Blindprägung (Hoch- /
-                                        Tiefrelief)</label>
+                                    <label class="form-check-label text-dark small" for="verBlind">Blindprägung (Hoch- / Tiefrelief)</label>
                                 </div>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
@@ -484,8 +471,7 @@
                                 <div class="form-check mb-0">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Veredelung_Spezialfarbe" value="Ja" id="verFarbe">
-                                    <label class="form-check-label text-dark small" for="verFarbe">Spezialfarbe (Pantone
-                                        / HKS-Schmuckfarben)</label>
+                                    <label class="form-check-label text-dark small" for="verFarbe">Spezialfarbe (Pantone / HKS-Schmuckfarben)</label>
                                 </div>
                             </div>
                         </div>
@@ -494,39 +480,31 @@
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-2"
-                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Kartonsorte &
-                                    Verarbeitung</label>
+                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Kartonsorte & Verarbeitung</label>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Karton_Chromokarton" value="Ja" id="matChromo">
-                                    <label class="form-check-label text-dark small" for="matChromo">Chromokarton
-                                        (Erlesene Farbwiedergabe)</label>
+                                    <label class="form-check-label text-dark small" for="matChromo">Chromokarton (Erlesene Farbwiedergabe)</label>
                                 </div>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Karton_Kraftkarton" value="Ja" id="matKraft">
-                                    <label class="form-check-label text-dark small" for="matKraft">Kraftkarton
-                                        (Rustikal, nachhaltig & braun)</label>
+                                    <label class="form-check-label text-dark small" for="matKraft">Kraftkarton (Rustikal, nachhaltig & braun)</label>
                                 </div>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Karton_Graukarton" value="Ja" id="matGrau">
-                                    <label class="form-check-label text-dark small" for="matGrau">Graukarton (Urbaner
-                                        Retro-Chic & griffig)</label>
+                                    <label class="form-check-label text-dark small" for="matGrau">Graukarton (Urbaner Retro-Chic & griffig)</label>
                                 </div>
                                 <div class="form-check mb-1">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Karton_Sulfatkarton" value="Ja" id="matSulfat">
-                                    <label class="form-check-label text-dark small" for="matSulfat">Sulfatkarton (Edles
-                                        Weiß & formstabil)</label>
+                                    <label class="form-check-label text-dark small" for="matSulfat">Sulfatkarton (Edles Weiß & formstabil)</label>
                                 </div>
-                                <!-- Inside-Out: Jetzt komplett neutral, ohne dicke Schrift und ohne Pink -->
                                 <div class="form-check mb-0 border-top border-secondary-subtle pt-2 mt-2">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Verarbeitung_Inside_Out" value="Ja" id="procInsideOut">
-                                    <label class="form-check-label text-dark small" for="procInsideOut">Inside-Out-Druck
-                                        (Raue Struktur
-                                        nach außen)</label>
+                                    <label class="form-check-label text-dark small" for="procInsideOut">Inside-Out-Druck (Raue Struktur nach außen)</label>
                                 </div>
                             </div>
                         </div>
@@ -535,19 +513,16 @@
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
-                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Ausstattung &
-                                    Extras</label>
+                                    style="font-weight: 700 !important; font-size: 1.05rem !important;">Ausstattung & Extras</label>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Extra_Optimierte_Mittelloecher" value="Ja" id="extOptimiert">
-                                    <label class="form-check-label text-dark small" for="extOptimiert">Optimierte
-                                        Mittellöcher</label>
+                                    <label class="form-check-label text-dark small" for="extOptimiert">Optimierte Mittellöcher</label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Extra_Zentrierte_Mittelloecher" value="Ja" id="extZentriert">
-                                    <label class="form-check-label text-dark small" for="extZentriert">Zentrierte
-                                        Mittellöcher</label>
+                                    <label class="form-check-label text-dark small" for="extZentriert">Zentrierte Mittellöcher</label>
                                 </div>
                                 <div class="form-check mb-2">
                                     <input class="form-check-input border-secondary" type="checkbox"
@@ -557,78 +532,78 @@
                                 <div class="form-check mb-0">
                                     <input class="form-check-input border-secondary" type="checkbox"
                                         name="Extra_Einleger_Booklets" value="Ja" id="addBooklets">
-                                    <label class="form-check-label text-dark small" for="addBooklets">Einleger &
-                                        Booklets</label>
+                                    <label class="form-check-label text-dark small" for="addBooklets">Einleger & Booklets</label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- UNTEREINANDER: STÜCKZAHL, UPLOAD & RECHTER DATENLINK -->
-
-                        <div class="col-12 mb-4">
+                        <!-- STÜCKZAHL -->
+                        <div class="col-12 mb-2">
                             <label for="vStueck" class="form-label small fw-bold text-dark"
-                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Gewünschte
-                                Stückzahl</label>
-                            <!-- Kurzer Platzhalter verhindert das Abschneiden im Mobile -->
-                            <input type="number" class="form-control bg-white text-dark py-2.5" name="Stueckzahl"
-                                id="vStueck" min="100" step="100" placeholder=" Mindestauflage 100 Stück"
+                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Gewünschte Stückzahl</label>
+                            <input type="number" class="form-control bg-white text-dark py-2.5" name="stueckzahl"
+                                id="vStueck" min="100" step="100" required placeholder="Mindestauflage 100 Stück"
                                 style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;">
                         </div>
-                        <div class="form-text text-muted small mt-1">Erlaubt: PDF, ZIP, JPG, PNG</div>
-                    </div>
 
-                    <div class="col-12 mt-3" id="dataLinkContainer">
-                        <label for="vLink" class="form-label small fw-bold text-dark"
-                            style="font-weight: 700 !important; font-size: 1.05rem !important;">Alternativ:
-                            WeTransfer- / Dropbox-Link für große Druckdaten</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light border-secondary text-dark"
-                                style="border-color: #94a3b8 !important;">🔗</span>
-                            <input type="url" class="form-control bg-white text-dark py-2"
-                                name="WeTransfer-Dropbox-Link" id="vLink" placeholder="https://we.tl/dein-daten-link"
-                                style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important;">
+                        <!-- DATEI-UPLOAD -->
+                        <div class="col-12 col-md-6 mb-2">
+                            <label for="vFile" class="form-label small fw-bold text-dark"
+                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Direkter Datei-Upload (max. 10 MB)</label>
+                            <input type="file" class="form-control bg-white text-dark py-2" id="vFile" name="vFile"
+                                accept=".pdf,.zip,.jpg,.jpeg,.png"
+                                style="border: 1px solid #94a3b8 !important; font-size: 1.05rem !important;">
+                            <div class="form-text text-muted small mt-1">Erlaubt: PDF, ZIP, JPG, PNG</div>
+                        </div>
+
+                        <!-- WE-TRANSFER LINK -->
+                        <div class="col-12 col-md-6 mb-2" id="dataLinkContainer">
+                            <label for="vLink" class="form-label small fw-bold text-dark"
+                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Alternativ: WeTransfer- / Dropbox-Link</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-secondary text-dark"
+                                    style="border-color: #94a3b8 !important; border-right: none !important;">🔗</span>
+                                <input type="url" class="form-control bg-white text-dark py-2"
+                                    name="datenlink" id="vLink" placeholder="https://we.tl/dein-daten-link"
+                                    style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; border-left: none !important;">
+                            </div>
+                            <div class="form-text text-muted small mt-1">Für Druckdaten, die größer als 10 MB sind.</div>
+                        </div>
+
+                        <!-- NACHRICHT -->
+                        <div class="col-12 mt-3">
+                            <label for="vNachricht" class="form-label small fw-bold text-dark"
+                                style="font-weight: 700 !important; font-size: 1.05rem !important;">Nachricht / Bemerkungen</label>
+                            <textarea class="form-control bg-white text-dark" name="message"
+                                id="vNachricht" rows="4"
+                                placeholder="Geben Sie hier optionale Details oder zusätzliche Wünsche an..."
+                                style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;"></textarea>
+                        </div>
+
+                        <!-- SUBMIT BUTTON -->
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-magenta w-100 py-3 fw-bold text-uppercase tracking-wide"
+                                id="vSubmitBtn"
+                                style="font-size: 1.15rem !important; box-shadow: 0 8px 20px rgba(255, 0, 127, 0.2) !important;">Spezifikations-Anfrage absenden</button>
                         </div>
                     </div>
+                </form>
 
-                    <!-- FREITEXT -->
-                    <div class="col-12 mt-3">
-                        <label for="vNachricht" class="form-label small fw-bold text-dark"
-                            style="font-weight: 700 !important; font-size: 1.05rem !important;">Nachricht /
-                            Bemerkungen</label>
-                        <textarea class="form-control bg-white text-dark" name="Nachricht-Projektdetails"
-                            id="vNachricht" rows="4"
-                            placeholder="Geben Sie hier optionale Details oder zusätzliche Wünsche an..."
-                            style="border: 1px solid #94a3b8 !important; font-size: 1.1rem !important; font-weight: 500 !important;"></textarea>
-                    </div>
-
-                    <!-- SUBMIT BUTTON -->
-                    <div class="col-12 mt-4">
-                        <button type="submit" class="btn btn-magenta w-100 py-3 fw-bold text-uppercase tracking-wide"
-                            id="vSubmitBtn"
-                            style="font-size: 1.15rem !important; box-shadow: 0 8px 20px rgba(255, 0, 127, 0.2) !important;">Spezifikations-Anfrage
-                            absenden</button>
-                    </div>
             </div>
-            </form>
-
-            </form>
 
             <!-- VINYL-KONTAKT -->
             <div class="mt-4 pt-3 border-top border-light text-center">
                 <p class="text-muted small mb-0">
                     Haben Sie Fragen zu den Maßen oder Spezifikationen?
                     <span class="d-block d-sm-inline mt-1 mt-sm-0 ms-sm-2">
-                        📞 <a href="tel:+493711234567" class="text-dark fw-bold text-decoration-none">0371 / 123 45
-                            67</a> &nbsp;|&nbsp; <br>
+                        📞 <a href="tel:+493711234567" class="text-dark fw-bold text-decoration-none">0371 / 123 45 67</a> &nbsp;|&nbsp; 
                         ✉️ <a href="mailto:vinyl@goerner-druck.de"
                             class="text-dark fw-bold text-decoration-none">vinyl@goerner-druck.de</a>
                     </span>
                 </p>
-                <small class="text-muted" style="font-size: 0.75rem;">Mo. – Fr. von 08:00 bis 16:00 Uhr
-                    erreichbar</small>
+                <small class="text-muted" style="font-size: 0.75rem;">Mo. – Fr. von 08:00 bis 16:00 Uhr erreichbar</small>
             </div>
 
-        </div>
         </div>
     </section>
 
