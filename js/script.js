@@ -10,13 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const heroText = document.querySelector(".hero-text-entry");
         const modernMachine = document.getElementById("heroModernMachine");
 
-        // 1a. Wenn wir auf der VINYL-Unterseite sind (Rotierende Platte)
         if (vinylWrapper) {
             vinylWrapper.classList.add("loaded");
             setTimeout(() => { vinylWrapper.classList.add("spinning"); }, 2200);
         }
 
-        // 1b. Wenn wir auf der STARTSEITE (index.html) sind -> Flüssiges Ignition-Konzept
         if (modernMachine) {
             modernMachine.style.opacity = "1";
             modernMachine.style.transform = "scale(1)";
@@ -30,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
 
-            // Scanner fährt aus, sobald die Zylinder glühen
             const scanner = modernMachine.querySelector('.precision-scanner');
             if (scanner) {
                 setTimeout(() => {
@@ -40,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }, 1300);
             }
 
-            // Maus-Effekt: Farb-Dunst ausstoßen
             modernMachine.addEventListener('mouseenter', function () {
                 const colors = ['#00ffff', '#ff007f', '#ffff00'];
                 for (let i = 0; i < 6; i++) {
@@ -63,14 +59,13 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Globale Elemente aktivieren
         if (workstationWrapper) { workstationWrapper.classList.add("loaded"); }
         if (packagingStage) { packagingStage.classList.add("loaded"); }
         if (heroText) { heroText.classList.add("visible"); }
     }, 300);
 
     // ==========================================================================
-    // 2. HIGH-END HOTSPOT LOGIK (Abgesichert)
+    // 2. HIGH-END HOTSPOT LOGIK
     // ==========================================================================
     const hotspotPins = document.querySelectorAll('.hotspot-pin');
     const targetCards = document.querySelectorAll('.hotspot-target-card');
@@ -106,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================================================
-    // 3. INTERACTIVE HOVER CAROUSEL CONTROL (Abgesichert)
+    // 3. INTERACTIVE HOVER CAROUSEL CONTROL
     // ==========================================================================
     const hoverTargets = document.querySelectorAll('.hover-target');
     if (hoverTargets.length > 0) {
@@ -147,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================================================
-    // 5. MOBILES DROPDOWN (Abgesichert)
+    // 5. MOBILES DROPDOWN
     // ==========================================================================
     const mobileArrows = document.querySelectorAll('.mobile-arrow');
     if (mobileArrows.length > 0) {
@@ -169,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================================================
-    // 6. HISTORISCHER FOTOSTAPEL (Abgesichert)
+    // 6. HISTORISCHER FOTOSTAPEL
     // ==========================================================================
     const photoStack = document.getElementById('historicalPhotoStack');
     const btnNextPhoto = document.getElementById('btnNextPhoto');
@@ -230,9 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: "POST",
                 redirect: "follow",
                 body: JSON.stringify(dataObject),
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8'
-                }
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
             })
             .then(response => response.json())
             .then(data => {
@@ -258,7 +251,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("Danke! Ihre Nachricht wurde erfolgreich übermittelt.");
                 }
                 contactForm.reset();
-                console.warn("Umleitung blockiert, aber Übertragung erfolgreich abgeschlossen.", error);
             })
             .finally(() => {
                 if (submitBtn) {
@@ -270,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================================================
-    // 8. VINYL FORMATE SLIDESHOWS (Abgesichert)
+    // 8. VINYL FORMATE SLIDESHOWS
     // ==========================================================================
     const formatsCarousels = document.querySelectorAll('.carousel');
     if (formatsCarousels.length > 0 && typeof bootstrap !== 'undefined') {
@@ -280,7 +272,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================================================
-    // 9. 3D SPINE EVOLUTION (Abgesichert)
+    // 9. 3D SPINE EVOLUTION
     // ==========================================================================
     const spineButtons = document.querySelectorAll('.spine-btn');
     const interactiveCover = document.getElementById('interactiveCover');
@@ -311,81 +303,72 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // ==========================================================================
-    // 10. VINYL-FORMULAR MIT DATEI-UPLOAD & PRÜFUNG ALLER NEUEN CHECKBOXEN
+    // 10. VINYL-FORMULAR VALIDIERUNG & ERZWUNGENE 100er SCHRITTE
     // ==========================================================================
     const vinylForm = document.getElementById("vinylContactForm");
     const vSubmitBtn = document.getElementById("vSubmitBtn");
+    const vStueckzahl = document.getElementById("vStueckzahl");
+
+    if (vStueckzahl) {
+        vStueckzahl.addEventListener("change", function () {
+            let value = parseInt(this.value, 10);
+            if (isNaN(value) || value < 100) {
+                this.value = 100;
+            } else {
+                this.value = Math.round(value / 100) * 100;
+            }
+        });
+    }
 
     if (vinylForm) {
         vinylForm.addEventListener("submit", function (event) {
             
-            // 1. Basis-Pflichtbereiche validieren
             const hatProdukt = [
-                "Produkt_Kastentasche_12", 
-                "Produkt_Kastentasche_10", 
-                "Produkt_Kastentasche_7",
-                "Produkt_Gatefold_12", 
-                "Produkt_Innentasche_12", 
-                "Produkt_Innentasche_10", 
-                "Produkt_Innentasche_7"
+                "Produkt_Kastentasche_12", "Produkt_Kastentasche_10", "Produkt_Kastentasche_7",
+                "Produkt_Gatefold_12", "Produkt_Innentasche_12", "Produkt_Innentasche_10", "Produkt_Innentasche_7"
             ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
+                const el = vinylForm.querySelector(`[name="${name}"]`);
+                return el ? el.checked : false;
             });
 
             const hatRuecken = [
-                "Ruecken_Ohne", 
-                "Ruecken_3mm", 
-                "Ruecken_5mm", 
-                "Ruecken_7mm", 
-                "Ruecken_10mm"
+                "Ruecken_Ohne", "Ruecken_3mm", "Ruecken_6mm", "Ruecken_7mm", "Ruecken_10mm"
             ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
+                const el = vinylForm.querySelector(`[name="${name}"]`);
+                return el ? el.checked : false;
             });
 
             const hatKarton = [
-                "Karton_Chromokarton", 
-                "Karton_Kraftkarton", 
-                "Karton_Graukarton", 
-                "Karton_Sulfatkarton"
+                "Karton_Chromokarton", "Karton_Kraftkarton", "Karton_Graukarton", "Karton_Sulfatkarton"
             ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
+                const el = vinylForm.querySelector(`[name="${name}"]`);
+                return el ? el.checked : false;
             });
 
-            // 2. Neue Checkbox-Gruppen (Farbigkeit & Grammatur) validieren
             const hatFarbigkeit = [
-                "Farbe_4c", 
-                "Farbe_1c", 
-                "Farbe_Sonder"
+                "Farbe_4c", "Farbe_1c", "Farbe_Sonder"
             ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
+                const el = vinylForm.querySelector(`[name="${name}"]`);
+                return el ? el.checked : false;
             });
 
             const hatGrammatur = [
-                "Gramm_180", 
-                "Gramm_300", 
-                "Gramm_350", 
-                "Gramm_Andere"
+                "Gramm_180", "Gramm_GZ1_190", "Gramm_GC1_200", "Gramm_300", "Gramm_GC1_300",
+                "Gramm_350", "Gramm_GC1_350", "Gramm_Andere"
             ].some(name => {
-                const element = vinylForm.querySelector(`[name="${name}"]`);
-                return element ? element.checked : false;
+                const el = vinylForm.querySelector(`[name="${name}"]`);
+                return el ? el.checked : false;
             });
 
-            // Strenges Absende-Verbot, wenn eine Gruppe leer ist
             if (!hatProdukt || !hatRuecken || !hatKarton || !hatFarbigkeit || !hatGrammatur) {
                 event.preventDefault();
-                
-                let fehlerMeldung = "Bitte füllen Sie folgende Pflichtbereiche aus:\n";
-                if (!hatProdukt) fehlerMeldung += "• Mindestens einen Produkt-Typ auswählen\n";
-                if (!hatRuecken) fehlerMeldung += "• Mindestens eine Rückenbreite auswählen\n";
-                if (!hatKarton) fehlerMeldung += "• Mindestens eine Kartonsorte auswählen\n";
-                if (!hatFarbigkeit) fehlerMeldung += "• Mindestens eine Farbigkeit auswählen\n";
-                if (!hatGrammatur) fehlerMeldung += "• Mindestens eine Grammatur auswählen\n";
-                
-                alert(fehlerMeldung);
+                let fehler = "Bitte füllen Sie folgende Pflichtbereiche aus:\n";
+                if (!hatProdukt) fehler += "• Mindestens einen Produkt-Typ auswählen\n";
+                if (!hatRuecken) fehler += "• Mindestens eine Rückenbreite auswählen\n";
+                if (!hatKarton) fehler += "• Mindestens eine Kartonsorte auswählen\n";
+                if (!hatFarbigkeit) fehler += "• Mindestens eine Farbigkeit auswählen\n";
+                if (!hatGrammatur) fehler += "• Mindestens eine Grammatur auswählen\n";
+                alert(fehler);
                 return;
             }
 
@@ -399,49 +382,55 @@ document.addEventListener("DOMContentLoaded", function () {
             const formData = new FormData(this);
             const fileInput = document.getElementById("vFile");
 
-            // Arrays befüllen
             const rueckenbreiten = [];
             if (formData.get("Ruecken_Ohne")) rueckenbreiten.push("Ohne Rücken");
             if (formData.get("Ruecken_3mm")) rueckenbreiten.push("3 mm");
-            if (formData.get("Ruecken_5mm")) rueckenbreiten.push("5 mm");
+            if (formData.get("Ruecken_6mm")) rueckenbreiten.push("6 mm");
             if (formData.get("Ruecken_7mm")) rueckenbreiten.push("7 mm");
             if (formData.get("Ruecken_10mm")) rueckenbreiten.push("10 mm");
-            
-            const veredelungen = [];
-            if (formData.get("Veredelung_Heissfolie")) veredelungen.push("Heißfolienprägung");
-            if (formData.get("Veredelung_Lack")) veredelungen.push("Partielle Lackierung");
-            if (formData.get("Veredelung_Blindpraegung")) veredelungen.push("Blindprägung");
-            if (formData.get("Veredelung_Stanzung")) veredelungen.push("Präzisions-Stanzung");
-            if (formData.get("Veredelung_Spezialfarbe")) veredelungen.push("Spezialfarbe (Pantone/HKS)");
 
             const kartonsorten = [];
-            if (formData.get("Karton_Chromokarton")) kartonsorten.push("Chromokarton");
+            if (formData.get("Karton_Chromokarton")) kartonsorten.push("Chromokarton (GC1)");
             if (formData.get("Karton_Kraftkarton")) kartonsorten.push("Kraftkarton");
             if (formData.get("Karton_Graukarton")) kartonsorten.push("Graukarton");
-            if (formData.get("Karton_Sulfatkarton")) kartonsorten.push("Sulfatkarton");
+            if (formData.get("Karton_Sulfatkarton")) kartonsorten.push("Sulfatkarton (GZ1)");
 
-            const extrasList = [];
-            if (formData.get("Extra_Optimierte_Mittelloecher")) extrasList.push("Optimierte Mittellöcher");
-            if (formData.get("Extra_Zentrierte_Mittelloecher")) extrasList.push("Zentrierte Mittellöcher");
-            if (formData.get("Extra_Schallplatten_Labels")) extrasList.push("Labels");
-            if (formData.get("Extra_Einleger_Booklets")) extrasList.push("Einleger & Booklets");
-
-            // Ausgewählte Farbigkeiten sammeln
             const farbAuswahl = [];
             if (formData.get("Farbe_4c")) farbAuswahl.push("4/4-farbig (CMYK)");
-            if (formData.get("Farbe_1c")) farbAuswahl.push("1/1-farbig (S/W)");
+            if (formData.get("Farbe_1c")) farbAuswahl.push("1/1-farbig (Schwarz/Weiß)");
             if (formData.get("Farbe_Sonder")) farbAuswahl.push("Sonderfarbe");
 
-            // Ausgewählte Grammaturen sammeln
             const grammAuswahl = [];
             if (formData.get("Gramm_180")) grammAuswahl.push("180 g/m²");
+            if (formData.get("Gramm_GZ1_190")) grammAuswahl.push("190 g/m²");
+            if (formData.get("Gramm_GC1_200")) grammAuswahl.push("200 g/m²");
             if (formData.get("Gramm_300")) grammAuswahl.push("300 g/m²");
+            if (formData.get("Gramm_GC1_300")) grammAuswahl.push("300 g/m² (GC1)");
             if (formData.get("Gramm_350")) grammAuswahl.push("350 g/m²");
-            
+            if (formData.get("Gramm_GC1_350")) grammAuswahl.push("350 g/m² (GC1)");
             const freitextGrammatur = formData.get("grammaturDetails") || "";
             if (formData.get("Gramm_Andere")) {
                 grammAuswahl.push(freitextGrammatur.trim() !== "" ? freitextGrammatur : "Andere Grammatur");
             }
+
+            const veredelungen = [];
+            if (formData.get("Veredelung_Heissfolie")) veredelungen.push("Heißfolienprägung");
+            if (formData.get("Veredelung_Lack")) veredelungen.push("Partielle Lackierung");
+            if (formData.get("Veredelung_Blindpraegung")) veredelungen.push("Blindprägung");
+            if (formData.get("Veredelung_Stanzung")) veredelungen.push("Stanzung");
+
+            const dispersionCello = [];
+            if (formData.get("Disp_Glanz")) dispersionCello.push("Dispersionslack glanz");
+            if (formData.get("Disp_Matt")) dispersionCello.push("Dispersionslack matt");
+            if (formData.get("Cello_Glanz")) dispersionCello.push("Cellophanierung glanz");
+            if (formData.get("Cello_Matt")) dispersionCello.push("Cellophanierung matt (kratzfest)");
+
+            const extrasList = [];
+            if (formData.get("Extra_Innendruck")) extrasList.push("Innendruck der Tasche");
+            if (formData.get("Extra_Optimierte_Mittelloecher")) extrasList.push("Optimierte Mittellöcher");
+            if (formData.get("Extra_Zentrierte_Mittelloecher")) extrasList.push("Zentrierte Mittellöcher");
+            if (formData.get("Extra_Schallplatten_Labels")) extrasList.push("Labels");
+            if (formData.get("Extra_Einleger_Booklets")) extrasList.push("Einleger & Booklets");
 
             const dataObject = {
                 formType: "vinyl",
@@ -466,6 +455,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 farbigkeit: farbAuswahl.join(", ") || "Keine Auswahl",
                 sonderfarbeDetails: formData.get("sonderfarbeDetails") || "",
                 grammatur: grammAuswahl.join(", ") || "Keine Auswahl",
+                dispersionCello: dispersionCello.join(", ") || "Keine Auswahl",
                 
                 insideOut: formData.get("Verarbeitung_Inside_Out") ? true : false,
                 extras: extrasList.join(", "),
@@ -480,9 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     method: "POST",
                     redirect: "follow",
                     body: JSON.stringify(payload),
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    }
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -491,11 +479,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             const thankYouModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
                             thankYouModal.show();
                         } else {
-                            alert("Danke! Ihre Vinyl-Anfrage wurde erfolgreich übermittelt.");
+                            alert("Danke! Ihre Anfrage wurde erfolgreich übermittelt.");
                         }
                         vinylForm.reset();
                     } else {
-                        alert("Es gab ein Problem im CRM: " + data.meldung);
+                        alert("CRM-Fehler: " + data.meldung);
                     }
                 })
                 .catch(error => {
@@ -503,10 +491,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         const thankYouModal = new bootstrap.Modal(document.getElementById('thankYouModal'));
                         thankYouModal.show();
                     } else {
-                        alert("Danke! Ihre Vinyl-Anfrage wurde erfolgreich übermittelt.");
+                        alert("Danke! Ihre Anfrage wurde erfolgreich übermittelt.");
                     }
                     vinylForm.reset();
-                    console.warn("Sicherheitsumleitung blockiert, Übermittlung trotzdem erfolgreich.", error);
                 })
                 .finally(() => {
                     if (vSubmitBtn) {
@@ -518,16 +505,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (fileInput && fileInput.files.length > 0) {
                 const selectedFile = fileInput.files[0];
-                
                 if (selectedFile.size > 10 * 1024 * 1024) {
-                    alert("Die Datei ist zu groß! Maximal erlaubt sind 10 MB. Bitte nutze für größere Dateien einen WeTransfer-Link.");
+                    alert("Datei zu groß! Maximal 10 MB erlaubt.");
                     if (vSubmitBtn) {
                         vSubmitBtn.disabled = false;
                         vSubmitBtn.textContent = "Spezifikations-Anfrage absenden";
                     }
                     return;
                 }
-
                 const reader = new FileReader();
                 reader.readAsDataURL(selectedFile);
                 reader.onload = function () {
@@ -535,13 +520,139 @@ document.addEventListener("DOMContentLoaded", function () {
                     dataObject.fileName = selectedFile.name; 
                     sendData(dataObject);
                 };
-                reader.onerror = function (error) {
-                    alert("Fehler beim Lesen der Datei. Bitte versuche es erneut.");
-                    console.error(error);
-                };
             } else {
                 sendData(dataObject);
             }
         });
     }
+
+    // ==========================================================================
+    // 11. DYNAMISCHE MATRIX & PRODUKTIONS-VALIDIERUNG (Lochungskonflikte gelöst)
+    // ==========================================================================
+    const gatefoldCheckbox = document.querySelector('[name="Produkt_Gatefold_12"]');
+    const allmRückenOptionen = document.querySelectorAll('.allgemein-option');
+    const grammDivs = document.querySelectorAll('.gramm-option');
+
+    const kartonChromo = document.querySelector('[name="Karton_Chromokarton"]');
+    const kartonKraft = document.querySelector('[name="Karton_Kraftkarton"]');
+    const kartonGrau = document.querySelector('[name="Karton_Graukarton"]');
+    const kartonSulfat = document.querySelector('[name="Karton_Sulfatkarton"]');
+
+    const prodK12 = document.querySelector('[name="Produkt_Kastentasche_12"]');
+    const prodK10 = document.querySelector('[name="Produkt_Kastentasche_10"]');
+    const prodK7 = document.querySelector('[name="Produkt_Kastentasche_7"]');
+    
+    const prodI12 = document.querySelector('[name="Produkt_Innentasche_12"]');
+    const prodI10 = document.querySelector('[name="Produkt_Innentasche_10"]');
+    const prodI7 = document.querySelector('[name="Produkt_Innentasche_7"]');
+
+    const optLochOpt = document.querySelector('[name="Extra_Optimierte_Mittelloecher"]');
+    const optLochZentr = document.querySelector('[name="Extra_Zentrierte_Mittelloecher"]');
+
+    function updateSpezifikationsMatrix() {
+        const gatefoldChecked = gatefoldCheckbox ? gatefoldCheckbox.checked : false;
+        const chromoChecked = kartonChromo ? kartonChromo.checked : false;
+        const kraftChecked = kartonKraft ? kartonKraft.checked : false;
+        const grauChecked = kartonGrau ? kartonGrau.checked : false;
+        const sulfatChecked = kartonSulfat ? kartonSulfat.checked : false;
+        const irgendeinKartonAktiv = chromoChecked || kraftChecked || grauChecked || sulfatChecked;
+
+        // A. Rückenbreiten sperren bei Gatefold
+        allmRückenOptionen.forEach(div => {
+            const input = div.querySelector('input');
+            if (input) {
+                if (gatefoldChecked) {
+                    input.checked = false;
+                    input.disabled = true;
+                    div.style.opacity = '0.35';
+                } else {
+                    input.disabled = false;
+                    div.style.opacity = '1';
+                }
+            }
+        });
+
+        // B. Grammaturen filtern nach Kartonsorte
+        grammDivs.forEach(div => {
+            const input = div.querySelector('input');
+            if (!input) return;
+
+            const name = input.name;
+            let erlaubtDurchKarton = true;
+            let erlaubtDurchGatefold = true;
+
+            if (gatefoldChecked && div.classList.contains('gramm-allgemein')) {
+                erlaubtDurchGatefold = false;
+            }
+
+            if (irgendeinKartonAktiv) {
+                erlaubtDurchKarton = false;
+                if (chromoChecked && (name === 'Gramm_200' || name === 'Gramm_300' || name === 'Gramm_350' || name === 'Gramm_GC1_200' || name === 'Gramm_GC1_300' || name === 'Gramm_GC1_350')) {
+                    erlaubtDurchKarton = true;
+                }
+                if (kraftChecked && (name === 'Gramm_300' || name === 'Gramm_350')) {
+                    erlaubtDurchKarton = true;
+                }
+                if (grauChecked && (name === 'Gramm_350')) {
+                    erlaubtDurchKarton = true;
+                }
+                if (sulfatChecked && (name === 'Gramm_GZ1_190')) {
+                    erlaubtDurchKarton = true;
+                }
+                if (name === 'Gramm_Andere') {
+                    erlaubtDurchKarton = true;
+                }
+            }
+
+            if (erlaubtDurchKarton && erlaubtDurchGatefold) {
+                input.disabled = false;
+                div.style.opacity = '1';
+            } else {
+                input.checked = false;
+                input.disabled = true;
+                div.style.opacity = '0.35';
+            }
+        });
+
+        // C. PRODUKTIONS-ABGLEICH FÜR LOCHUNGEN
+        const kastentascheAktiv = (prodK12 && prodK12.checked) || (prodK10 && prodK10.checked) || (prodK7 && prodK7.checked);
+        const andereTascheAktiv = gatefoldChecked || (prodI12 && prodI12.checked) || (prodI10 && prodI10.checked) || (prodI7 && prodI7.checked);
+
+        const modalEl = document.getElementById('maxiHoleModal');
+        const msgEl = document.getElementById('modalHoleMessage');
+
+        // Kastentasche darf NIEMALS zentriert sein
+        if (kastentascheAktiv && optLochZentr && optLochZentr.checked) {
+            optLochZentr.checked = false; 
+            if (optLochOpt) optLochOpt.checked = true;
+            
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                if (msgEl) msgEl.textContent = "Diese Mittelloch-Kombination ist keine Standard-Kombination.Kastentaschen erfordern zwingend optimierte Mittellöcher. Wenn Sie diese Kombination wünschen, kontaktieren Sie uns unter vinyl@druckerei-goerner.de.";
+                const myModal = new bootstrap.Modal(modalEl);
+                myModal.show();
+            }
+        }
+
+        // Andere Formate (Gatefold / Innentasche) dürfen NIEMALS optimiert sein
+        if (andereTascheAktiv && !kastentascheAktiv && optLochOpt && optLochOpt.checked) {
+            optLochOpt.checked = false;
+            if (optLochZentr) optLochZentr.checked = true;
+            
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                if (msgEl) msgEl.textContent = "Diese Mittelloch-Kombination ist keine Standard-Kombination. Kastentaschen erfordern optimierte Mittellöcher. Wenn Sie diese Kombination wünschen, kontaktieren Sie uns unter vinyl@druckerei-goerner.de.";
+                const myModal = new bootstrap.Modal(modalEl);
+                myModal.show();
+            }
+        }
+    }
+
+    if (gatefoldCheckbox) gatefoldCheckbox.addEventListener('change', updateSpezifikationsMatrix);
+    if (optLochOpt) optLochOpt.addEventListener('change', updateSpezifikationsMatrix);
+    if (optLochZentr) optLochZentr.addEventListener('change', updateSpezifikationsMatrix);
+
+    [kartonChromo, kartonKraft, kartonGrau, kartonSulfat, prodK12, prodK10, prodK7, prodI12, prodI10, prodI7].forEach(chk => {
+        if (chk) chk.addEventListener('change', updateSpezifikationsMatrix);
+    });
+
+    updateSpezifikationsMatrix();
 });
