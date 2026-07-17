@@ -11,7 +11,6 @@
 
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
         <div class="container">
             <a class="navbar-brand text-uppercase fw-bold tracking-wide" href="../../index.html">
@@ -28,7 +27,7 @@
                     <li class="nav-item dropdown hover-dropdown mobile-split-dropdown">
                         <div class="d-flex align-items-center justify-content-between w-100">
                             <a class="nav-link w-100" href="../../sites/vinyl/vinyl.html">Vinyl-Verpackungen</a>
-                            <span class="mobile-arrow d-lg-none">
+                            <span class="mobile-arrow d-lg-none" data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="6 9 12 15 18 9"></polyline>
@@ -47,7 +46,7 @@
                     <li class="nav-item dropdown hover-dropdown mobile-split-dropdown">
                         <div class="d-flex align-items-center justify-content-between w-100">
                             <a class="nav-link w-100" href="../../sites/produktion/print.html">Printmedien</a>
-                            <span class="mobile-arrow d-lg-none">
+                            <span class="mobile-arrow d-lg-none" data-bs-toggle="dropdown" aria-expanded="false">
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="6 9 12 15 18 9"></polyline>
@@ -80,7 +79,6 @@
         </div>
     </nav>
 
-    <!-- HERO SECTION MIT ROTIERENDER VINYL-PLATTE -->
     <section class="hero-section d-flex align-items-center text-white bg-dark position-relative overflow-hidden">
         <div class="container py-5 position-relative" style="z-index: 2;">
             <div class="row align-items-center g-5">
@@ -132,12 +130,10 @@
         </div>
     </section>
 
-    <!-- INTRO-SEKTION (Mit sanfter Einblend-Animation) -->
     <section class="py-5 bg-white text-dark overflow-hidden">
         <div class="container py-5">
             <div class="row g-5 align-items-center">
 
-                <!-- Linke Spalte: Das Bild fliegt elegant von links ein -->
                 <div class="col-12 col-lg-6 hero-text-entry visible">
                     <div class="position-relative shadow-lg rounded-4 overflow-hidden bg-light"
                         style="transition: transform 0.5s ease-in-out;"
@@ -149,7 +145,6 @@
                     </div>
                 </div>
 
-                <!-- Rechte Spalte: Der Text nutzt die CSS-Animation für den geschmeidigen Einflug -->
                 <div class="col-12 col-lg-6 ps-lg-5 hero-text-entry visible" style="transition-delay: 0.3s;">
                     <span class="text-magenta text-uppercase fw-bold tracking-wider small d-block mb-2">Die Kunst der
                         ersten Sekunde</span>
@@ -169,7 +164,6 @@
                         matten oder hochglänzenden Charakter, den Ihre Musik verdient.
                     </p>
 
-                    <!-- Die Fakten im modernen, dezenten Grid -->
                     <div class="row g-4 border-top border-light pt-4">
                         <div class="col-sm-6">
                             <h5 class="fw-bold text-dark mb-2">Materialauswahl</h5>
@@ -188,9 +182,6 @@
         </div>
     </section>
 
-    <!-- PRODUCT TEASER (Hell) -->
-
-    <!-- ATMO-TRENNBILD (Volle Breite zwischen den Sektionen) -->
     <div class="w-100 overflow-hidden shadow-sm border-top border-bottom border-light"
         style="height: 280px; background: #111;">
         <img src="../../img/vinyl/labels1.png" class="w-100 h-100"
@@ -198,11 +189,9 @@
             alt="Vinyl Produktion Detailaufnahme">
     </div>
 
-    <!-- PRODUCT TEASER (Modernes Produkt-Grid - Jetzt mit 4 Spalten) -->
     <section class="py-5 bg-light text-dark overflow-hidden">
         <div class="container py-4">
 
-            <!-- Sektions-Header mit Charakter -->
             <div class="row justify-content-center text-center mb-5 hero-text-entry visible">
                 <div class="col-lg-8">
                     <span class="text-magenta text-uppercase fw-bold tracking-wider small d-block mb-2">Vom Rohling zum
@@ -214,10 +203,8 @@
                 </div>
             </div>
 
-            <!-- Interaktive Produkt-Karten (Optimierte Breite gegen Umbrüche) -->
             <div class="row g-4 justify-content-center hero-text-entry visible" style="transition-delay: 0.2s;">
 
-                <!-- Karte 1: Formate -->
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="p-4 px-3 bg-white rounded-4 h-100 shadow-sm d-flex flex-column transition-card border-top border-magenta border-3"
                         style="transition: transform 0.3s ease, box-shadow 0.3s ease;"
@@ -234,7 +221,6 @@
                     </div>
                 </div>
 
-                <!-- Karte 2: Innenhüllen -->
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="p-4 px-3 bg-white rounded-4 h-100 shadow-sm d-flex flex-column transition-card border-top border-magenta border-3"
                         style="transition: transform 0.3s ease, box-shadow 0.3s ease;"
@@ -251,7 +237,6 @@
                     </div>
                 </div>
 
-                <!-- Karte 3: Booklets -->
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="p-4 px-3 bg-white rounded-4 h-100 shadow-sm d-flex flex-column transition-card border-top border-magenta border-3"
                         style="transition: transform 0.3s ease, box-shadow 0.3s ease;"
@@ -268,7 +253,6 @@
                     </div>
                 </div>
 
-                <!-- Karte 4: Materialien -->
                 <div class="col-12 col-md-6 col-xl-3">
                     <div class="p-4 px-3 bg-white rounded-4 h-100 shadow-sm d-flex flex-column transition-card border-top border-magenta border-3"
                         style="transition: transform 0.3s ease, box-shadow 0.3s ease;"
@@ -289,10 +273,6 @@
         </div>
     </section>
 
-    <!-- ==========================================================================
-   SEKTION: VINYL-SPEZIFIKATIONS-KONFIGURATOR (RÜCKENBREITE ALS CHECKBOXEN)
-    ========================================================================== -->
-
     <section id="vinyl-konfigurator" class="py-5 bg-light text-dark border-top border-light">
         <div class="container py-4">
 
@@ -308,15 +288,11 @@
                             class="text-dark">Mindestauflage: 100 Stück.</strong></p>
                 </div>
 
-                <!-- VINYL-KONFIGURATOR FORMULAR-SEGMENT -->
-
-                <!-- VINYL-KONFIGURATOR FORMULAR -->
                 <form id="vinylContactForm"
-                    action="https://script.google.com/macros/s/AKfycbxc7GqqdZIw_wANs0bl6cpTlJT_Jdj46vGfc7MsnmGCKQTIiLzmkEctD58bdlnxm2Cs/exec"
+                    action="https://script.google.com/macros/s/AKfycbxwmDcOkDdjma5jjReRzWH8iZQHiTeyNdeiCuUuqZvhW4ZdsxoB-RjnpgvltmlmFbFn/exec"
                     method="POST" class="needs-validation" novalidate>
                     <div class="row g-4">
 
-                        <!-- Stammdaten (Komplett Sternchenfrei) -->
                         <div class="col-12 col-md-6 mb-3">
                             <label for="vFirmaBand" class="form-label small fw-bold text-dark">Firma / Bandname</label>
                             <input type="text" class="form-control bg-white text-dark py-2" name="firmaBand"
@@ -343,7 +319,6 @@
                                 placeholder="Für Rückfragen">
                         </div>
 
-                        <!-- 1. PRODUKT-AUSWAHL -->
                         <div class="col-12 mb-4">
                             <div class="p-3 bg-light rounded-3 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -402,7 +377,6 @@
                             </div>
                         </div>
 
-                        <!-- 2. RÜCKENBREITE -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -436,7 +410,6 @@
                             </div>
                         </div>
 
-                        <!-- 3. KARTONSORTE -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -468,7 +441,6 @@
                             </div>
                         </div>
 
-                        <!-- 4. FARBIGKEIT (Sonderfarbe bleibt ausschließlich hier) -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -503,7 +475,6 @@
                             </div>
                         </div>
 
-                        <!-- 5. GRAMMATUR (Exakt sortiert von dünn nach dick) -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -533,7 +504,6 @@
                             </div>
                         </div>
 
-                        <!-- 6. VEREDELUNG (Bereinigt) -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -564,7 +534,6 @@
                             </div>
                         </div>
 
-                        <!-- 7. LACKE & CELLOPHANIERUNGEN -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -598,7 +567,6 @@
                             </div>
                         </div>
 
-                        <!-- 8. EXTRAS & STÜCKZAHL NEBENEINANDER (In einer Zeile) -->
                         <div class="col-12 col-md-6 mb-4">
                             <div class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm">
                                 <label class="form-label small fw-bold text-dark d-block mb-3"
@@ -642,7 +610,6 @@
                             </div>
                         </div>
 
-                        <!-- STÜCKZAHL RECHTS DANEBEN -->
                         <div class="col-12 col-md-6 mb-4">
                             <div
                                 class="p-3 bg-light rounded-3 h-100 border-start border-magenta border-3 shadow-sm d-flex flex-column justify-content-start">
@@ -659,12 +626,14 @@
                             </div>
                         </div>
 
-                        <!-- Uploads nebeneinander darunter -->
-                        <div class="col-12 col-md-6 mb-3">
-                            <label for="vFile" class="form-label small fw-bold text-dark">Druckdatei hochladen (Max. 10
-                                MB)</label>
-                            <input type="file" class="form-control bg-white text-dark py-2" id="vFile"
-                                accept=".pdf,.zip,.rar,.tar">
+                        <div class="col-md-4">
+                            <label for="vFile" class="form-label fw-bold text-white-50">Dateiupload (max. 10 MB)</label>
+                            <div class="input-group">
+                                <input type="file" class="form-control bg-dark text-white border-secondary" name="vFile"
+                                    id="vFile">
+                                <button class="btn btn-outline-danger d-none" type="button"
+                                    id="vFileResetBtn">Löschen</button>
+                            </div>
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label for="vDatenlink" class="form-label small fw-bold text-dark">WeTransfer- /
@@ -687,7 +656,6 @@
                     </div>
                 </form>
 
-                <!-- WARN-MODAL FÜR PRODUKTIONSFEHLER IN DER LOCHUNG -->
                 <div class="modal fade" id="maxiHoleModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content bg-white text-dark">
@@ -697,7 +665,8 @@
                                     aria-label="Schließen"></button>
                             </div>
                             <div class="modal-body pt-2">
-                                <p class="small text-muted mb-0" id="modalHoleMessage">Bitte melden Sie sich bei uns, wenn Sie diese Kombination wünschen unter vinyl@druckerei-goerner.de.</p>
+                                <p class="small text-muted mb-0" id="modalHoleMessage">Bitte melden Sie sich bei uns,
+                                    wenn Sie diese Kombination wünschen unter vinyl@druckerei-goerner.de.</p>
                             </div>
                             <div class="modal-footer border-0 pt-0">
                                 <button type="button" class="btn btn-magenta btn-sm px-4"
@@ -708,22 +677,22 @@
                 </div>
 
 
-        </div>
+            </div>
 
-        <!-- VINYL-KONTAKT -->
-        <div class="mt-4 pt-3 border-top border-light text-center">
-            <p class="text-muted small mb-0">
-                Haben Sie Fragen zu den Maßen oder Spezifikationen?
-                <span class="d-block d-sm-inline mt-1 mt-sm-0 ms-sm-2">
-                    📞 <a href="tel:+493711234567" class="text-dark fw-bold text-decoration-none">+49 371 5291 26</a>
-                    &nbsp;|&nbsp;
-                    ✉️ <a href="mailto:vinyl@goerner-druck.de"
-                        class="text-dark fw-bold text-decoration-none">vinyl@goerner-druck.de</a>
-                </span>
-            </p>
-            <small class="text-muted" style="font-size: 0.75rem;">Mo. – Fr. von 08:00 bis 16:00 Uhr
-                erreichbar</small>
-        </div>
+            <div class="mt-4 pt-3 border-top border-light text-center">
+                <p class="text-muted small mb-0">
+                    Haben Sie Fragen zu den Maßen oder Spezifikationen?
+                    <span class="d-block d-sm-inline mt-1 mt-sm-0 ms-sm-2">
+                        📞 <a href="tel:+493711234567" class="text-dark fw-bold text-decoration-none">+49 371 5291
+                            26</a>
+                        &nbsp;|&nbsp;
+                        ✉️ <a href="mailto:vinyl@goerner-druck.de"
+                            class="text-dark fw-bold text-decoration-none">vinyl@goerner-druck.de</a>
+                    </span>
+                </p>
+                <small class="text-muted" style="font-size: 0.75rem;">Mo. – Fr. von 08:00 bis 16:00 Uhr
+                    erreichbar</small>
+            </div>
 
         </div>
     </section>
@@ -749,7 +718,6 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <footer class="bg-black text-secondary py-4 fs-6 border-top border-secondary-dark">
         <div class="container text-center text-md-start">
             <div class="row g-4 align-items-center">
