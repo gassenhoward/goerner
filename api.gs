@@ -128,7 +128,7 @@ function verarbeiteVinylFormular(data) {
   const inn10 = data.Produkt_Innentasche_10 ? "Ja" : "";
   const inn7 = data.Produkt_Innentasche_7 ? "Ja" : "";
 
-  // 1. GENERIERUNG DER MASTER-ZUSAMMENFASSUNG FÜR DEINE KOLLEGEN (Landet in Spalte G)
+  // GENERIERUNG DER MASTER-ZUSAMMENFASSUNG FÜR DEINE KOLLEGEN (Wird anstelle des Duplikats übergeben)
   const crmZeilenArray = [];
   
   if (data.Produkt_Kastentasche_12) crmZeilenArray.push("• 12\" Kastentasche" + (data.stueckzahl_Kastentasche_12 ? " [" + data.stueckzahl_Kastentasche_12 + " Stk.]" : "") + (data.extras_Kastentasche_12 ? " (Extras: " + data.extras_Kastentasche_12 + ")" : ""));
@@ -139,11 +139,9 @@ function verarbeiteVinylFormular(data) {
   if (data.Produkt_Innentasche_10)  crmZeilenArray.push("• 10\" Innentasche"   + (data.stueckzahl_Innentasche_10  ? " [" + data.stueckzahl_Innentasche_10  + " Stk.]" : "") + (data.extras_Innentasche_10  ? " (Extras: " + data.extras_Innentasche_10  + ")" : ""));
   if (data.Produkt_Innentasche_7)   crmZeilenArray.push("• 7\" Innentasche"    + (data.stueckzahl_Innentasche_7   ? " [" + data.stueckzahl_Innentasche_7   + " Stk.]" : "") + (data.extras_Innentasche_7   ? " (Extras: " + data.extras_Innentasche_7   + ")" : ""));
 
-  // Zusatzkomponenten mit eigenen Stückzahlen anhängen
   if (data.stueckzahl_Labels) crmZeilenArray.push("• Schallplatten-Labels [" + data.stueckzahl_Labels + " Stk.]");
   if (data.stueckzahl_Einleger) crmZeilenArray.push("• Einleger / Booklets [" + data.stueckzahl_Einleger + " Stk.]");
 
-  // Die Zeilen werden sauber mit einem echten Zeilenumbruch getrennt!
   const projektZusammenfassung = crmZeilenArray.join("\n");
 
   const rücken = data.rueckenbreite || "";
@@ -157,21 +155,44 @@ function verarbeiteVinylFormular(data) {
   const inOut = data.insideOut ? "Ja" : "";
   const extras = data.extras || "";
   
-  // In Spalte Y hinterlegen wir zur Sicherheit die primäre globale Stückzahl des Kunden
   const stück = data.stueckzahl || "Spezifisch";
   const nachricht = data.message || "";
 
-  // appendRow befüllt exakt deine Spalten A bis AC ohne Verschiebung
+  // EXAKT AN DIE SPALTEN A BIS AC ANGEPASSTE STRUKTUR
   sheet.appendRow([
-    timestamp, data.name, data.firmaBand || "", data.projektname || "", data.email, data.phone || "", 
-    projektZusammenfassung, kaste10, kaste7, gate12, inn12, inn10, inn7, rücken, veredelung, karton, farbigkeit, 
-    sonderfarbeDetails, innendruck, grammatur, veredelung, dispersionCello, inOut, extras, stück, 
-    sheetDriveLink, sheetTransferLink, nachricht, "Neu"
+    timestamp,                 // A
+    data.name,                 // B
+    data.firmaBand || "",      // C
+    data.projektname || "",    // D
+    data.email,                // E
+    data.phone || "",          // F
+    kaste12,                   // G [NEU HINZUGEFÜGT]
+    kaste10,                   // H
+    kaste7,                    // I
+    gate12,                    // J
+    inn12,                     // K
+    inn10,                     // L
+    inn7,                      // M
+    rücken,                    // N
+    veredelung,                // O
+    karton,                    // P
+    farbigkeit,                // Q
+    sonderfarbeDetails,        // R
+    innendruck,                // S
+    grammatur,                 // T
+    projektZusammenfassung,    // U [Hier stand das doppelte "veredelung", jetzt perfekt genutzt für das Dashboard!]
+    dispersionCello,           // V
+    inOut,                     // W
+    extras,                    // X
+    stück,                     // Y
+    sheetDriveLink,            // Z
+    sheetTransferLink,         // AA
+    nachricht,                 // AB
+    "Neu"                      // AC
   ]);
   
   formatiereTabelle("vinyl_anfragen");
   
-  // Bereitet die HTML-E-Mail auf
   const emailProdukteHtml = crmZeilenArray.map(zeile => `<li>${zeile}</li>`).join("");
 
   try {
@@ -269,13 +290,9 @@ function formatiereTabelle(sheetName) {
   
   datenBereichKomplett.setFontFamily("Arial").setFontSize(10).setVerticalAlignment("middle").setHorizontalAlignment("left");
   
-  // WICHTIG FÜR DIE ÜBERSICHTLICHE MASTERZEILE:
-  // Wir erlauben in Spalte G echten Textumbruch (Wrap), damit die Produkte sauber untereinander stehen.
   datenBereichKomplett.setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP); 
   
   for (let r = 2; r <= lastRow; r++) {
-    // Da in Spalte G mehrere Produkte untereinander stehen, geben wir den Zeilen automatisch mehr Höhe (z.B. 65px),
-    // damit deine Kollegen alles sofort ohne lästiges Klicken lesen können!
     sheet.setRowHeight(r, 65); 
     verarbeiteZeilenFarbeUndRahmen(sheet, r, lastColumn);
   }
@@ -285,11 +302,11 @@ function formatiereTabelle(sheetName) {
     sheet.getRange("E2:E" + lastRow).setHorizontalAlignment("center");
     sheet.getRange("F2:F" + lastRow).setHorizontalAlignment("center");
     
-    // Die Master-Zusammenfassung (Spalte G) bekommt echten Textumbruch spendiert!
-    sheet.getRange("G2:G" + lastRow).setHorizontalAlignment("left").setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP);
+    // Spalte U (Dashboard-Zusammenfassung) bekommt den echten Zeilenumbruch spendiert
+    sheet.getRange("U2:U" + lastRow).setHorizontalAlignment("left").setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP);
     
-    // Alte Produkt-Kontrollspalten bleiben im Hintergrund zentriert
-    sheet.getRange(2, 8, lastRow - 1, 6).setHorizontalAlignment("center");
+    // Zentrierungen der Produkt-Optionen
+    sheet.getRange(2, 7, lastRow - 1, 7).setHorizontalAlignment("center");
     
     sheet.getRange("T2:T" + lastRow).setHorizontalAlignment("center"); 
     sheet.getRange("W2:W" + lastRow).setHorizontalAlignment("center");

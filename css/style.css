@@ -725,10 +725,7 @@ footer p, footer a { font-size: 0.9rem !important; }
     }
 }
 
-/* ==========================================================================
-   OPTISCHES DESIGN-UPGRADE: HELLER PREMIUM-LOOK GEGEN DIE DUNKELHEIT
-   ========================================================================== */
-   
+
 /* ==========================================================================
    KOMPLETTER DESIGN- & RESPONSIVE-FIX FÜR #KONTAKT (INKL. GROSSER SCHRIFT)
    ========================================================================== */
@@ -909,3 +906,167 @@ footer p, footer a { font-size: 0.9rem !important; }
     color: #4b5563 !important;              /* Schickes, lesbares Dunkelgrau für den Text */
 }
 
+/* 1. Konfigurator-Warenkorb Styling (Kundenansicht) */
+#basketList .list-group-item {
+    background-color: #111827 !important;
+    border: 1px solid #334155 !important;
+    border-left: 4px solid #ff007f !important;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+/* ==========================================================================
+   CI-FORMULARKONFIGURATOR RASTER-OPTIMIERUNG (HELL, BÜNDIG & DYNAMISCH)
+   ========================================================================== */
+.form-config-matrix {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.form-config-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    align-items: stretch; /* Erzwingt die exakt gleiche vertikale Länge der Kästen */
+}
+
+@media (min-width: 992px) {
+    .form-config-row {
+        grid-template-columns: 1.25fr 1fr;
+    }
+}
+
+/* Linker Kasten: Spezifikation */
+.card-panel-config {
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    width: 100% !important;
+}
+
+/* Rechter Kasten: Container für Warenkorb + Kontakte */
+.card-panel-config-right-wrapper {
+    background-color: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Ineinandergreifende Blöcke rechts */
+.card-panel-basket {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #ff007f;
+    padding: 1.25rem;
+    border-radius: 6px;
+    flex-grow: 1; /* Füllt den Raum flexibel aus, um Symmetrie zu wahren */
+}
+
+.card-panel-contact {
+    width: 100%;
+}
+
+/* Symmetrisches Formular-Raster für Inline-Felder */
+.form-grid-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+    .form-grid-inner.two-col {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Felder-Design: Absolut lesbar auf hellem Grund */
+.form-config-matrix .form-control,
+.form-config-matrix .form-select {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 0.625rem 0.75rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    border-radius: 4px !important;
+    height: 44px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s ease-in-out !important;
+}
+
+.form-config-matrix .form-control:focus,
+.form-config-matrix .form-select:focus {
+    background-color: #ffffff !important;
+    border-color: #ff007f !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 0, 127, 0.15) !important;
+    color: #0f172a !important;
+}
+
+/* Label-Struktur: Bündig und gestochen scharf */
+.form-config-matrix label {
+    display: block !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+    margin-bottom: 0.4rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* Items im Live-Warenkorb */
+#basketList .list-group-item {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #ff007f !important;
+    padding: 1rem !important;
+    margin-bottom: 0.75rem !important;
+    border-radius: 4px !important;
+    color: #0f172a !important;
+}
+
+#basketList .list-group-item .text-white-50 {
+    color: #64748b !important;
+}
+
+.text-magenta {
+    color: #ff007f !important;
+}
+
+/* Buttons */
+.btn-magenta {
+    background-color: #ff007f !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    height: 50px !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.btn-magenta:hover {
+    background-color: #e60072 !important;
+}
+
+.btn-outline-magenta {
+    color: #ff007f !important;
+    border: 2px solid #ff007f !important;
+    background-color: transparent !important;
+    font-weight: 700 !important;
+    height: 46px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    transition: all 0.2s ease !important;
+}
+
+.btn-outline-magenta:hover {
+    background-color: #ff007f !important;
+    color: #ffffff !important;
+}
