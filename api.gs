@@ -5,13 +5,12 @@
 const EMAIL_INFO = "info@druckerei-goerner.de"; 
 const EMAIL_VINYL = "vinyl@druckerei-goerner.de, satz@druckerei-goerner.de"; 
 const GOOGLE_DRIVE_FOLDER_ID = "1ENmLOpM79-Lq_2oprfa-eXosZgnwzEnE";
-
 const SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1UoYbGcSrBFcXyraAYy6gikHVSAJdv_Dyn7ck1SGIZnw/edit?usp=sharing";
 
-/**
- * AUTOMATISCHER CRM-TRIGGER: Läuft in Echtzeit bei manuellen Änderungen (z.B. Status)
- * Färbt bei einer Statusänderung die gesamte Zeile ein und setzt den Magenta-Rahmen.
- */
+// ==========================================================================
+// 1. AUTOMATISCHE TRIGGER & ROUTING (doPost / doGet)
+// ==========================================================================
+
 function onEdit(e) {
   if (!e) return;
   const range = e.range;
@@ -34,15 +33,11 @@ function onEdit(e) {
   }
 }
 
-/**
- * Empfängt POST-Anfragen vom Webformular (AJAX)
- */
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) {
       return erstelleJsonAntwort(false, "Fehler: Keine Formulardaten empfangen.");
     }
-
     const data = JSON.parse(e.postData.contents);
     const formType = data.formType;
     
@@ -58,39 +53,198 @@ function doPost(e) {
   }
 }
 
-/**
- * Empfängt GET-Anfragen (Statusabfrage)
- */
 function doGet(e) {
-  try {
-    const auftragsnummer = e.parameter.auftragsnummer;
-    if (!auftragsnummer) return erstelleJsonAntwort(false, "Keine Auftragsnummer angegeben.");
-    
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName("auftraege");
-    const daten = sheet.getDataRange().getValues();
-    
-    for (let i = 1; i < daten.length; i++) {
-      if (daten[i][0].toString().trim().toUpperCase() === auftragsnummer.trim().toUpperCase()) {
-        const ergebnis = {
-          auftragsnummer: daten[i][0],
-          projektname: daten[i][2],
-          status: daten[i][3],
-          liefertermin: daten[i][6] ? Utilities.formatDate(new Date(daten[i][6]), Session.getScriptTimeZone(), "dd.MM.yyyy") : "Noch offen"
-        };
-        return erstelleJsonAntwort(true, "Auftrag gefunden.", ergebnis);
+  const userProperties = PropertiesService.getUserProperties();
+  const sessionActive = userProperties.getProperty('crm_session_active');
+  
+  if (e && e.parameter && e.parameter.auftragsnummer) {
+    try {
+      const auftragsnummer = e.parameter.auftragsnummer;
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      const sheet = ss.getSheetByName("auftraege");
+      if(!sheet) return erstelleJsonAntwort(false, "Tabelle nicht gefunden.");
+      const daten = sheet.getDataRange().getValues();
+      for (let i = 1; i < daten.length; i++) {
+        if (daten[i][0].toString().trim().toUpperCase() === auftragsnummer.trim().toUpperCase()) {
+          const ergebnis = {
+            auftragsnummer: daten[i][0],
+            projektname: daten[i][2],
+            status: daten[i][3],
+            liefertermin: daten[i][6] ? Utilities.formatDate(new Date(daten[i][6]), Session.getScriptTimeZone(), "dd.MM.yyyy") : "Noch offen"
+          };
+          return erstelleJsonAntwort(true, "Auftrag gefunden.", ergebnis);
+        }
       }
+      return erstelleJsonAntwort(false, "Auftragsnummer nicht gefunden.");
+    } catch (error) {
+      return erstelleJsonAntwort(false, "Fehler: " + error.toString());
     }
-    return erstelleJsonAntwort(false, "Auftragsnummer nicht gefunden.");
-  } catch (error) {
-    return erstelleJsonAntwort(false, "Fehler: " + error.toString());
+  }
+
+  if ((e && e.parameter && e.parameter.page === 'dashboard') || sessionActive === 'true') {
+    return HtmlService.createTemplateFromFile('Dashboard').evaluate()
+        .setTitle('CRM Admin-Panel | Druckerei Görner')
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+  }
+  
+  return HtmlService.createTemplateFromFile('Login').evaluate()
+      .setTitle('Anmeldung | CRM Admin-Panel')
+      .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+      .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+// ==========================================================================
+// 2. AUTHENTIFIZIERUNG & SESSION-MANAGEMENT
+// ==========================================================================
+
+function checkAuthentication(username, password) {
+  const adminUser = "admin_goerner";
+  const adminPass = "GOERNER_CRM_2026!#"; 
+  if (username === adminUser && password === adminPass) {
+    const userProperties = PropertiesService.getUserProperties();
+    userProperties.setProperty('crm_session_active', 'true');
+    return { success: true };
+  }
+  return { success: false, message: "Zugangsdaten ungültig." };
+}
+
+function performLogoutBackend() {
+  const userProperties = PropertiesService.getUserProperties();
+  userProperties.deleteProperty('crm_session_active');
+  return { success: true };
+}
+
+// ==========================================================================
+// 3. CRM DASHBOARD API-ENDPUNKTE
+// ==========================================================================
+
+function getFormRequests() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("vinyl_anfragen");
+  if (!sheet) return [];
+  const values = sheet.getDataRange().getValues();
+  const data = [];
+  
+  for (let i = values.length - 1; i >= Math.max(1, values.length - 100); i--) {
+    let row = values[i];
+    data.push({
+      rowIndex: i + 1,
+      timestamp: row[0] ? Utilities.formatDate(new Date(row[0]), Session.getScriptTimeZone(), "dd.MM.yyyy HH:mm") : "",
+      kunde: row[1] || "",
+      firmaBand: row[2] || "",
+      projekt: row[3] || "",
+      email: row[4] || "",
+      phone: row[5] || "",
+      zusammenfassung: row[20] || "",
+      driveLink: row[25] || "",
+      transferLink: row[26] || "",
+      nachricht: row[27] || "",
+      status: row[28] || "Neu"
+    });
+  }
+  return data;
+}
+
+function updateRequestStatusBackend(rowIndex, newStatus) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName("vinyl_anfragen");
+    if (!sheet) return { success: false, message: "Tabelle nicht gefunden." };
+    
+    sheet.getRange(parseInt(rowIndex), 29).setValue(newStatus);
+    verarbeiteZeilenFarbeUndRahmen(sheet, parseInt(rowIndex), sheet.getLastColumn());
+    return { success: true, message: "Status erfolgreich auf '" + newStatus + "' aktualisiert." };
+  } catch (e) {
+    return { success: false, message: e.toString() };
   }
 }
+
+// ==========================================================================
+// 4. STELLENANGEBOTE & ASSETS BACKEND LOGIK
+// ==========================================================================
+
+function saveNewJobOffer(title, department, type, description) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName("stellenangebote");
+    if (!sheet) {
+      sheet = ss.insertSheet("stellenangebote");
+      sheet.appendRow(["Zeitstempel", "Titel", "Abteilung", "Art", "Beschreibung", "Status"]);
+    }
+    sheet.appendRow([new Date(), title, department, type, description, "Aktiv"]);
+    return { success: true, message: "Stellenangebot erfolgreich live geschaltet." };
+  } catch(e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
+function getLiveJobsBackend() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("stellenangebote");
+  if (!sheet) return [];
+  const values = sheet.getDataRange().getValues();
+  const data = [];
+  for (let i = 1; i < values.length; i++) {
+    if (values[i][5] === "Aktiv") {
+      data.push({
+        rowId: i + 1,
+        titel: values[i][1],
+        abteilung: values[i][2],
+        art: values[i][3],
+        beschreibung: values[i][4]
+      });
+    }
+  }
+  return data;
+}
+
+function deleteJobOfferBackend(rowId) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName("stellenangebote");
+    if (!sheet) return { success: false, message: "Tabelle nicht gefunden." };
+    sheet.getRange(parseInt(rowId), 6).setValue("Inaktiv");
+    return { success: true, message: "Stellenangebot erfolgreich deaktiviert." };
+  } catch(e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
+function updateCrmImage(base64Data, fileName, targetImageId) {
+  try {
+    const splitData = base64Data.split(",");
+    const contentType = splitData[0].match(/:(.*?);/)[1];
+    const decoded = Utilities.base64Decode(splitData[1]);
+    const blob = Utilities.newBlob(decoded, contentType, fileName);
+    
+    if (targetImageId) {
+      const existingFile = DriveApp.getFileById(targetImageId);
+      existingFile.setContent(blob);
+      return { success: true, url: existingFile.getUrl(), id: targetImageId };
+    } else {
+      const folder = DriveApp.getFolderById(GOOGLE_DRIVE_FOLDER_ID);
+      const newFile = folder.createFile(blob);
+      newFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      return { success: true, url: newFile.getUrl(), id: newFile.getId() };
+    }
+  } catch(e) {
+    return { success: false, message: e.toString() };
+  }
+}
+
+// ==========================================================================
+// 5. FORMULAR-VERARBEITUNG (KONTAKT & VINYL MULTI-BASKET)
+// ==========================================================================
 
 function verarbeiteKontaktFormular(data) {
   if (!data.name || !data.email) return erstelleJsonAntwort(false, "Name und E-Mail erforderlich.");
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName("anfragen");
+  let sheet = ss.getSheetByName("anfragen");
+  if (!sheet) {
+    sheet = ss.insertSheet("anfragen");
+    sheet.appendRow(["Zeitstempel", "Name", "E-Mail", "Telefon", "Betreff", "Nachricht", "Status"]);
+  }
   
   const timestamp = new Date();
   sheet.appendRow([timestamp, data.name, data.email, data.phone || "", data.subject || "", data.message || "", "Neu"]);
@@ -100,13 +254,22 @@ function verarbeiteKontaktFormular(data) {
   return erstelleJsonAntwort(true, "Kontaktanfrage gespeichert!");
 }
 
-/**
- * HOCHFLEXIBLE VINYL-VERARBEITUNG: Erstellt das perfekte Dashboard-Textformat für die Kollegen
- */
 function verarbeiteVinylFormular(data) {
   if (!data.name || !data.email) return erstelleJsonAntwort(false, "Name und E-Mail erforderlich.");
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName("vinyl_anfragen");
+  let sheet = ss.getSheetByName("vinyl_anfragen");
+  if (!sheet) {
+    sheet = ss.insertSheet("vinyl_anfragen");
+    sheet.appendRow([
+      "Zeitstempel", "Name", "Firma/Band", "Projektname", "E-Mail", "Telefon", 
+      "12 Kastentasche", "10 Kastentasche", "7 Kastentasche", "12 Gatefold", 
+      "12 Innentasche", "10 Innentasche", "7 Innentasche", "Rückenbreite", 
+      "Veredelung", "Kartonsorte", "Farbigkeit", "Sonderfarbe Details", 
+      "Innendruck", "Grammatur", "Projekt-Zusammenfassung", "Lack/Cello", 
+      "Inside Out", "Extras", "Stückzahl", "Drive Link", "Transfer Link", 
+      "Nachricht", "Status"
+    ]);
+  }
   
   const timestamp = new Date();
   let driveLink = "";
@@ -118,91 +281,58 @@ function verarbeiteVinylFormular(data) {
 
   const sheetDriveLink = driveLink ? '=HYPERLINK("' + driveLink + '"; "Druckdatei öffnen ➔")' : "";
   const sheetTransferLink = data.datenlink ? data.datenlink : "";
+  const projektZusammenfassung = data.projektZusammenfassung || data.message || "Keine Spezifikationen angegeben.";
 
-  // Hintergrund-Kompatibilität für alte Spalten bleibt aktiv
-  const kaste12 = data.Produkt_Kastentasche_12 ? "Ja" : "";
-  const kaste10 = data.Produkt_Kastentasche_10 ? "Ja" : "";
-  const kaste7 = data.Produkt_Kastentasche_7 ? "Ja" : "";
-  const gate12 = data.Produkt_Gatefold_12 ? "Ja" : "";
-  const inn12 = data.Produkt_Innentasche_12 ? "Ja" : "";
-  const inn10 = data.Produkt_Innentasche_10 ? "Ja" : "";
-  const inn7 = data.Produkt_Innentasche_7 ? "Ja" : "";
-
-  // GENERIERUNG DER MASTER-ZUSAMMENFASSUNG FÜR DEINE KOLLEGEN (Wird anstelle des Duplikats übergeben)
-  const crmZeilenArray = [];
-  
-  if (data.Produkt_Kastentasche_12) crmZeilenArray.push("• 12\" Kastentasche" + (data.stueckzahl_Kastentasche_12 ? " [" + data.stueckzahl_Kastentasche_12 + " Stk.]" : "") + (data.extras_Kastentasche_12 ? " (Extras: " + data.extras_Kastentasche_12 + ")" : ""));
-  if (data.Produkt_Kastentasche_10) crmZeilenArray.push("• 10\" Kastentasche" + (data.stueckzahl_Kastentasche_10 ? " [" + data.stueckzahl_Kastentasche_10 + " Stk.]" : "") + (data.extras_Kastentasche_10 ? " (Extras: " + data.extras_Kastentasche_10 + ")" : ""));
-  if (data.Produkt_Kastentasche_7)  crmZeilenArray.push("• 7\" Kastentasche"  + (data.stueckzahl_Kastentasche_7  ? " [" + data.stueckzahl_Kastentasche_7  + " Stk.]" : "") + (data.extras_Kastentasche_7  ? " (Extras: " + data.extras_Kastentasche_7  + ")" : ""));
-  if (data.Produkt_Gatefold_12)     crmZeilenArray.push("• 12\" Gatefold"     + (data.stueckzahl_Gatefold_12     ? " [" + data.stueckzahl_Gatefold_12     + " Stk.]" : "") + (data.extras_Gatefold_12     ? " (Extras: " + data.extras_Gatefold_12     + ")" : ""));
-  if (data.Produkt_Innentasche_12)  crmZeilenArray.push("• 12\" Innentasche"   + (data.stueckzahl_Innentasche_12  ? " [" + data.stueckzahl_Innentasche_12  + " Stk.]" : "") + (data.extras_Innentasche_12  ? " (Extras: " + data.extras_Innentasche_12  + ")" : ""));
-  if (data.Produkt_Innentasche_10)  crmZeilenArray.push("• 10\" Innentasche"   + (data.stueckzahl_Innentasche_10  ? " [" + data.stueckzahl_Innentasche_10  + " Stk.]" : "") + (data.extras_Innentasche_10  ? " (Extras: " + data.extras_Innentasche_10  + ")" : ""));
-  if (data.Produkt_Innentasche_7)   crmZeilenArray.push("• 7\" Innentasche"    + (data.stueckzahl_Innentasche_7   ? " [" + data.stueckzahl_Innentasche_7   + " Stk.]" : "") + (data.extras_Innentasche_7   ? " (Extras: " + data.extras_Innentasche_7   + ")" : ""));
-
-  if (data.stueckzahl_Labels) crmZeilenArray.push("• Schallplatten-Labels [" + data.stueckzahl_Labels + " Stk.]");
-  if (data.stueckzahl_Einleger) crmZeilenArray.push("• Einleger / Booklets [" + data.stueckzahl_Einleger + " Stk.]");
-
-  const projektZusammenfassung = crmZeilenArray.join("\n");
-
-  const rücken = data.rueckenbreite || "";
-  const veredelung = data.veredelung || "";
-  const karton = data.kartonsorte || "";
-  const farbigkeit = data.farbigkeit || "";
-  const sonderfarbeDetails = data.sonderfarbeDetails || "";
-  const innendruck = data.innendruckDetails ? data.innendruckDetails : "";
-  const grammatur = data.grammatur || "";
-  const dispersionCello = data.dispersionCello || "";
-  const inOut = data.insideOut ? "Ja" : "";
-  const extras = data.extras || "";
-  
-  const stück = data.stueckzahl || "Spezifisch";
-  const nachricht = data.message || "";
-
-  // EXAKT AN DIE SPALTEN A BIS AC ANGEPASSTE STRUKTUR
   sheet.appendRow([
-    timestamp,                 // A
-    data.name,                 // B
-    data.firmaBand || "",      // C
-    data.projektname || "",    // D
-    data.email,                // E
-    data.phone || "",          // F
-    kaste12,                   // G [NEU HINZUGEFÜGT]
-    kaste10,                   // H
-    kaste7,                    // I
-    gate12,                    // J
-    inn12,                     // K
-    inn10,                     // L
-    inn7,                      // M
-    rücken,                    // N
-    veredelung,                // O
-    karton,                    // P
-    farbigkeit,                // Q
-    sonderfarbeDetails,        // R
-    innendruck,                // S
-    grammatur,                 // T
-    projektZusammenfassung,    // U [Hier stand das doppelte "veredelung", jetzt perfekt genutzt für das Dashboard!]
-    dispersionCello,           // V
-    inOut,                     // W
-    extras,                    // X
-    stück,                     // Y
-    sheetDriveLink,            // Z
-    sheetTransferLink,         // AA
-    nachricht,                 // AB
-    "Neu"                      // AC
+    timestamp,                     // A
+    data.name,                     // B
+    data.firmaBand || "",          // C
+    data.projektname || "",        // D
+    data.email,                    // E
+    data.phone || "",              // F
+    "", "", "", "", "", "", "",    // G-M
+    "",                            // N
+    "",                            // O
+    "",                            // P
+    "",                            // Q
+    "",                            // R
+    "",                            // S
+    "",                            // T
+    projektZusammenfassung,        // U
+    "",                            // V
+    "",                            // W
+    "",                            // X
+    data.stueckzahl || "Spezifisch",// Y
+    sheetDriveLink,                // Z
+    sheetTransferLink,             // AA
+    data.message || "",            // AB
+    "Neu"                          // AC
   ]);
   
   formatiereTabelle("vinyl_anfragen");
   
-  const emailProdukteHtml = crmZeilenArray.map(zeile => `<li>${zeile}</li>`).join("");
-
   try {
-    sendeVinylEmail(data.firmaBand || "", data.projektname || "", data.name, data.email, data.phone || "", emailProdukteHtml, rücken, veredelung, karton, farbigkeit, sonderfarbeDetails, grammatur, dispersionCello, stück, driveLink, sheetTransferLink, nachricht);
+    sendeVinylEmail(
+      data.firmaBand || "Keine Angabe", 
+      data.projektname || "Unbenanntes Projekt", 
+      data.name, 
+      data.email, 
+      data.phone || "-", 
+      projektZusammenfassung, 
+      driveLink, 
+      sheetTransferLink,
+      data.message || ""
+    );
   } catch (mailError) {
     console.error("Vinyl-Mail-Fehler: " + mailError.toString());
   }
   
   return erstelleJsonAntwort(true, "Vinyl-Spezifikation erfolgreich gespeichert!");
 }
+
+// ==========================================================================
+// 6. E-MAIL BENACHRICHTIGUNGEN
+// ==========================================================================
 
 function sendeKontaktEmail(name, email, phone, subject, message) {
   const htmlBody = `
@@ -220,35 +350,92 @@ function sendeKontaktEmail(name, email, phone, subject, message) {
   MailApp.sendEmail({ to: EMAIL_INFO, subject: "CRM: Neue Kontaktanfrage", htmlBody: htmlBody });
 }
 
-function sendeVinylEmail(firmaBand, projektname, name, email, phone, emailProdukteHtml, rücken, veredelung, karton, farbigkeit, sonderfarbeDetails, grammatur, dispersionCello, stueck, dateiLink, transferLink, message) {
-  const sonderfarbeHtml = farbigkeit.toLowerCase().includes("sonderfarbe") ? `<p style="margin: 4px 0;"><strong>Sonderfarbe Details:</strong> ${sonderfarbeDetails}</p>` : "";
+function sendeVinylEmail(firmaBand, projektname, name, email, phone, zusammenfassung, dateiLink, transferLink, message) {
+  const webAppUrl = ScriptApp.getService().getUrl() + "?page=dashboard";
+  
+  const formattierterHtmlText = zusammenfassung.split('\n\n').map(block => {
+    const zeilen = block.split('\n');
+    const titel = zeilen[0];
+    const details = zeilen.slice(1).join('<br>');
+    return `
+      <div style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+        <strong style="font-size: 15px; color: #1e293b; display: block; margin-bottom: 4px;">${titel}</strong>
+        <div style="padding-left: 12px; color: #475569; font-size: 13px; line-height: 1.5;">${details}</div>
+      </div>
+    `;
+  }).join('');
+
+  let assetsHtml = "";
+  if (dateiLink) {
+    assetsHtml += `<p style="margin: 6px 0;"><strong>Direkt-Upload (Google Drive):</strong> <a href="${dateiLink}" target="_blank" style="color: #ff007f; font-weight: bold; text-decoration: underline;">Druckdatei öffnen ➔</a></p>`;
+  } else {
+    assetsHtml += `<p style="margin: 6px 0; color: #6b7280;"><strong>Direkt-Upload:</strong> Kein Upload vorhanden</p>`;
+  }
+
+  if (transferLink) {
+    assetsHtml += `<p style="margin: 6px 0;"><strong>Cloud-Link (WeTransfer / Dropbox):</strong> <a href="${transferLink}" target="_blank" style="color: #ff007f; font-weight: bold; text-decoration: underline;">Transfer-Link öffnen ➔</a></p>`;
+  } else {
+    assetsHtml += `<p style="margin: 6px 0; color: #6b7280;"><strong>Cloud-Link:</strong> Kein Link angegeben</p>`;
+  }
+
   const htmlBody = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; border: 1px solid #ff007f; padding: 20px; border-radius: 8px;">
-      <h2 style="color: #ff007f; border-bottom: 2px solid #ff007f; padding-bottom: 10px; margin-top: 0;">Neue CRM-Anfrage: Vinyl-Konfigurator</h2>
-      <p><strong>Firma / Band:</strong> ${firmaBand} | <strong>Projekt:</strong> ${projektname}</p>
-      <p><strong>Kunde:</strong> ${name} (<a href="mailto:${email}">${email}</a>)</p>
+    <div style="font-family: Arial, sans-serif; max-width: 680px; border: 2px solid #ff007f; padding: 25px; border-radius: 8px; background-color: #ffffff; color: #111111; line-height: 1.5;">
+      <h2 style="color: #ff007f; border-bottom: 2px solid #ff007f; padding-bottom: 12px; margin-top: 0;">Neue Vinyl-Spezifikationsanfrage</h2>
       
-      <h3 style="color: #ff007f; margin-top: 20px; margin-bottom: 5px;">Bestellte Komponenten & Stückzahlen:</h3>
-      <div style="background-color: #fff0f6; padding: 12px 15px; border-radius: 6px; margin: 10px 0;">
-        <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
-          ${emailProdukteHtml}
-        </ul>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <tr>
+          <td style="padding: 6px 0; width: 30%;"><strong>Kunde / Name:</strong></td>
+          <td style="padding: 6px 0;">${name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0;"><strong>Firma / Band:</strong></td>
+          <td style="padding: 6px 0;">${firmaBand || "-"}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0;"><strong>Projektname:</strong></td>
+          <td style="padding: 6px 0;">${projektname || "-"}</td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0;"><strong>E-Mail:</strong></td>
+          <td style="padding: 6px 0;"><a href="mailto:${email}" style="color: #ff007f;">${email}</a></td>
+        </tr>
+        <tr>
+          <td style="padding: 6px 0;"><strong>Telefon:</strong></td>
+          <td style="padding: 6px 0;">${phone || "-"}</td>
+        </tr>
+      </table>
+
+      <h3 style="color: #ff007f; margin-top: 20px; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">Spezifizierte Komponenten:</h3>
+      <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px; color: #0f172a;">
+        ${formattierterHtmlText}
       </div>
 
-      <h3 style="color: #333; margin-top: 15px; margin-bottom: 5px;">Technische Materialdaten:</h3>
-      <p><strong>Rückenbreite:</strong> ${rücken} | <strong>Karton:</strong> ${karton}</p>
-      <p><strong>Farbigkeit:</strong> ${farbigkeit} ${sonderfarbeHtml} | <strong>Grammatur:</strong> ${grammatur}</p>
-      <p><strong>Veredelung / Lacke:</strong> ${veredelung} ${dispersionCello}</p>
-      <p><strong>Upload-Datei:</strong> ${dateiLink ? `<a href="${dateiLink}">Öffnen ➔</a>` : "Keine"} | <strong>Transfer:</strong> ${transferLink ? `<a href="${transferLink}">Öffnen ➔</a>` : "Kein"}</p>
-      
-      <div style="background: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #ff007f; margin-top: 15px;">
-        <p style="margin: 0; font-weight: bold; color: #ff007f;">Kundennachricht:</p>
-        <p style="margin: 0; white-space: pre-wrap;">${message}</p>
+      <h3 style="color: #ff007f; margin-top: 25px; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">Druckdaten & Assets:</h3>
+      <div style="background-color: #f1f5f9; padding: 12px 15px; border-radius: 6px; font-size: 14px;">
+        ${assetsHtml}
+      </div>
+
+      ${message ? `
+      <h3 style="color: #ff007f; margin-top: 25px; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px;">Anmerkungen des Kunden:</h3>
+      <div style="background-color: #fff0f6; border-left: 4px solid #ff007f; padding: 12px 15px; border-radius: 4px; font-size: 14px; white-space: pre-wrap;">${message}</div>
+      ` : ''}
+
+      <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #e5e7eb; text-align: center;">
+        <a href="${webAppUrl}" style="background-color: #ff007f; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block;">Zum CRM Admin Dashboard ➔</a>
       </div>
     </div>
   `;
-  MailApp.sendEmail({ to: EMAIL_VINYL, subject: "CRM: Vinyl-Anfrage von " + name, htmlBody: htmlBody });
+
+  MailApp.sendEmail({ 
+    to: EMAIL_VINYL, 
+    subject: `CRM [Vinyl]: ${projektname || "Neuer Auftrag"} - ${name}`, 
+    htmlBody: htmlBody 
+  });
 }
+
+// ==========================================================================
+// 7. UTILITIES & TABELLEN-FORMATIERUNG
+// ==========================================================================
 
 function speichereDateiInDrive(base64String, dateiName) {
   const ordner = DriveApp.getFolderById(GOOGLE_DRIVE_FOLDER_ID);
@@ -264,10 +451,6 @@ function speichereDateiInDrive(base64String, dateiName) {
 function erstelleJsonAntwort(erfolg, meldung, daten = null) {
   return ContentService.createTextOutput(JSON.stringify({ erfolg: erfolg, meldung: meldung, daten: daten })).setMimeType(ContentService.MimeType.JSON);
 }
-
-// ==========================================================================
-// INTERAKTIVES CRM STYLING-ENGINE (ZUR DETAILED OVERVIEW OPTIMIERT)
-// ==========================================================================
 
 function formatiereTabelle(sheetName) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -289,7 +472,6 @@ function formatiereTabelle(sheetName) {
   if (lastRow === 1) return;
   
   datenBereichKomplett.setFontFamily("Arial").setFontSize(10).setVerticalAlignment("middle").setHorizontalAlignment("left");
-  
   datenBereichKomplett.setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP); 
   
   for (let r = 2; r <= lastRow; r++) {
@@ -301,13 +483,8 @@ function formatiereTabelle(sheetName) {
     sheet.getRange("A2:A" + lastRow).setHorizontalAlignment("center");
     sheet.getRange("E2:E" + lastRow).setHorizontalAlignment("center");
     sheet.getRange("F2:F" + lastRow).setHorizontalAlignment("center");
-    
-    // Spalte U (Dashboard-Zusammenfassung) bekommt den echten Zeilenumbruch spendiert
     sheet.getRange("U2:U" + lastRow).setHorizontalAlignment("left").setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP);
-    
-    // Zentrierungen der Produkt-Optionen
     sheet.getRange(2, 7, lastRow - 1, 7).setHorizontalAlignment("center");
-    
     sheet.getRange("T2:T" + lastRow).setHorizontalAlignment("center"); 
     sheet.getRange("W2:W" + lastRow).setHorizontalAlignment("center");
     sheet.getRange("Y2:Y" + lastRow).setHorizontalAlignment("center").setFontWeight("bold");
@@ -323,7 +500,6 @@ function verarbeiteZeilenFarbeUndRahmen(sheet, row, lastColumn) {
   
   zeilenBereich.setBorder(true, null, true, null, null, null, "#e2e8f0", SpreadsheetApp.BorderStyle.SOLID);
   zeilenBereich.setFontFamily("Arial").setFontSize(10).setFontColor("#111111").setVerticalAlignment("middle");
-  
   sheet.getRange(row, statusColumn).setFontWeight("bold").setHorizontalAlignment("center");
   
   if (statusWert === "Neu" || statusWert === "") {

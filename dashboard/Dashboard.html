@@ -1,136 +1,262 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görner CRM Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', Arial, sans-serif; }
-        .sidebar { background-color: #1e293b; min-height: 100vh; border-right: 2px solid #ff007f; }
-        .nav-link { color: #94a3b8; font-weight: 600; }
-        .nav-link.active { color: #fff; background-color: #ff007f !important; }
-        
-        .grid-split { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: start; }
-        @media (min-width: 992px) { .grid-split { grid-template-columns: 1.3fr 1fr; } }
-        
-        .card-panel { background-color: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .live-panel { border-left: 4px solid #ff007f; background-color: #111827; }
-        .list-group-item { transition: all 0.2s ease; border-radius: 6px !important; }
-        .list-group-item:hover { background-color: #1f2937 !important; border-color: #ff007f !important; }
-        .form-control:focus, .form-select:focus { border-color: #ff007f !important; box-shadow: 0 0 0 0.25rem rgba(255, 0, 127, 0.25) !important; }
-        
-        .btn-magenta { background-color: #ff007f !important; color: #ffffff !important; transition: background-color 0.2s ease; font-weight: 700; border: none; }
-        .btn-magenta:hover { background-color: #e60072 !important; }
-        
-        .table-crm { color: #e2e8f0; }
-        .table-crm th { background-color: #0f172a; color: #ff007f; border-bottom: 2px solid #334155; }
-        .table-crm tbody tr { transition: background-color 0.15s ease; }
-        .table-crm tbody tr:hover { background-color: #243249 !important; }
-        .badge { padding: 0.5em 0.75em; font-weight: 600; }
-        .text-magenta { color: #ff007f !important; }
-    </style>
+    <link rel="stylesheet" href="../css/dashboard.css">
+
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3 col-lg-2 sidebar p-4">
                 <h4 class="text-white fw-bold mb-4">GÖRNER <span class="text-magenta">CRM</span></h4>
+                <!-- SIDEBAR NAVIGATION OHNE EMOJIS -->
                 <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
-                    <button class="nav-link active mb-2 text-start" id="tab-requests" data-bs-toggle="pill" data-bs-target="#panel-requests" type="button">📥 Formularanfragen</button>
-                    <button class="nav-link mb-2 text-start" id="tab-jobs" data-bs-toggle="pill" data-bs-target="#panel-jobs" type="button">🚀 Stellenangebote</button>
-                    <button class="nav-link mb-2 text-start" id="tab-images" data-bs-toggle="pill" data-bs-target="#panel-images" type="button">🖼️ Bilder-Manager</button>
-                    <button class="nav-link mt-4 text-start text-danger btn btn-link text-decoration-none" onclick="logout()" type="button">🚪 Abmelden</button>
+                    <button class="nav-link active mb-2 text-start" id="tab-vinyl" data-bs-toggle="pill"
+                        data-bs-target="#panel-vinyl" type="button"
+                        onclick="loadVinylRequests()">Vinyl-Anfragen</button>
+                    <button class="nav-link mb-2 text-start" id="tab-kontakt" data-bs-toggle="pill"
+                        data-bs-target="#panel-kontakt" type="button"
+                        onclick="loadKontaktRequests()">Kontakt-Anfragen</button>
+                    <button class="nav-link mb-2 text-start" id="tab-jobs" data-bs-toggle="pill"
+                        data-bs-target="#panel-jobs" type="button">Stellenangebote (Geschützt)</button>
+                    <button class="nav-link mb-2 text-start" id="tab-actions" data-bs-toggle="pill"
+                        data-bs-target="#panel-actions" type="button" onclick="loadTemplates()">Action-Flyout &
+                        Texte</button>
+                    <button class="nav-link mb-2 text-start" id="tab-cookies" data-bs-toggle="pill"
+                        data-bs-target="#panel-cookies" type="button"
+                        onclick="loadCookieConsents()">Cookie-Einwilligungen</button>
+                    <button class="nav-link mb-2 text-start" id="tab-images" data-bs-toggle="pill"
+                        data-bs-target="#panel-images" type="button">Bilder-Manager</button>
+                    <button class="nav-link mt-4 text-start text-danger btn btn-link text-decoration-none"
+                        onclick="logout()" type="button">Abmelden</button>
                 </div>
             </div>
-            
+
             <div class="col-md-9 col-lg-10 p-5">
                 <div class="tab-content" id="v-pills-tabContent">
-                    
-                    <!-- TAB: ANFRAGEN -->
-                    <div class="tab-pane fade show active" id="panel-requests" role="tabpanel">
+
+                    <!-- TAB 1: VINYL-ANFRAGEN -->
+                    <div class="tab-pane fade show active" id="panel-vinyl" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h2 class="fw-bold">Formular- & Cookie-Anfragen</h2>
-                            <button onclick="loadRequests()" class="btn btn-sm btn-outline-light px-3">Aktualisieren</button>
+                            <h2 class="fw-bold">📀 Vinyl-Anfragen</h2>
+                            <button onclick="loadVinylRequests()"
+                                class="btn btn-sm btn-outline-light px-3">Aktualisieren</button>
                         </div>
                         <div class="card-panel p-4">
                             <div class="table-responsive">
                                 <table class="table table-dark table-striped table-crm align-middle" id="requestsTable">
                                     <thead>
                                         <tr>
-                                            <th style="width: 15%;">Zeitstempel</th>
-                                            <th style="width: 20%;">Kunde / Band</th>
-                                            <th style="width: 20%;">Projekt</th>
-                                            <th style="width: 35%;">Spezifikationen</th>
-                                            <th style="width: 10%;">Status</th>
+                                            <th>Zeitstempel</th>
+                                            <th>Kunde / Band</th>
+                                            <th>Projekt</th>
+                                            <th>Spezifikationen</th>
+                                            <th>Bearbeiter</th>
+                                            <th>Status</th>
+                                            <th>Aktion</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr><td colspan="5" class="text-center text-muted py-4">Lade Echtzeitdaten aus Google Sheets...</td></tr>
+                                    <tbody id="vinylTableBody">
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">Lade Vinyl-Daten...</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- TAB: STELLENANGEBOTE (Visuell neu strukturiertes Grid) -->
-                    <div class="tab-pane fade" id="panel-jobs" role="tabpanel">
-                        <div class="grid-split">
-                            <!-- Linke Seite: Erfassung -->
-                            <div class="card-panel p-4">
-                                <h3 class="fw-bold mb-4 text-white pb-2 border-bottom border-secondary">Neues Stellenangebot erfassen</h3>
-                                <div id="jobAlert" class="alert d-none"></div>
-                                
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <label class="form-label small text-white-50 fw-bold">Titel der Stelle</label>
-                                        <input type="text" id="jobTitle" class="form-control bg-dark text-white border-secondary py-2" placeholder="z. B. Medientechnologe Druck (m/w/d)">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small text-white-50 fw-bold">Abteilung</label>
-                                        <select id="jobDept" class="form-select bg-dark text-white border-secondary py-2">
-                                            <option value="Prepress / Druckvorstufe">Prepress / Druckvorstufe</option>
-                                            <option value="Produktion / Bogenoffset">Produktion / Bogenoffset</option>
-                                            <option value="Weiterverarbeitung / Postpress">Weiterverarbeitung / Postpress</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small text-white-50 fw-bold">Anstellungsart</label>
-                                        <input type="text" id="jobType" class="form-control bg-dark text-white border-secondary py-2" value="Ausbildung">
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-label small text-white-50 fw-bold">Beschreibung / Aufgaben matrix</label>
-                                        <textarea id="jobDesc" rows="6" class="form-control bg-dark text-white border-secondary" placeholder="Aufgaben und Profilbeschreibungen lückenlos eintragen..."></textarea>
-                                    </div>
-                                    <div class="col-12 mt-4">
-                                        <button onclick="submitJob()" class="btn btn-magenta w-100 py-3 text-uppercase tracking-wide">Stelle live veröffentlichen</button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Rechte Seite: Live-Entfernung -->
-                            <div id="liveJobsContainer" class="card-panel p-4 live-panel">
-                                <h3 class="fw-bold mb-4 text-white pb-2 border-bottom border-secondary">Aktive Live-Angebote</h3>
-                                <div id="liveJobsList" class="list-group d-flex flex-column gap-2"></div>
+
+                    <!-- TAB 2: KONTAKT-ANFRAGEN -->
+                    <div class="tab-pane fade" id="panel-kontakt" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="fw-bold">✉️ Allgemeines Kontaktformular</h2>
+                            <button onclick="loadKontaktRequests()"
+                                class="btn btn-sm btn-outline-light px-3">Aktualisieren</button>
+                        </div>
+                        <div class="card-panel p-4">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped table-crm align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Zeitstempel</th>
+                                            <th>Name</th>
+                                            <th>E-Mail / Tel</th>
+                                            <th>Betreff & Nachricht</th>
+                                            <th>Bearbeiter</th>
+                                            <th>Status</th>
+                                            <th>Aktion</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="kontaktTableBody">
+                                        <tr>
+                                            <td colspan="7" class="text-center text-muted py-4">Lade Kontakt-Daten...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- TAB: ASSETS -->
+
+                    <!-- TAB 3: STELLENANGEBOTE (Geschützt) -->
+                    <!-- TAB: STELLENANGEBOTE (Geschützt mit Overlay) -->
+                    <div class="tab-pane fade" id="panel-jobs" role="tabpanel">
+
+                        <!-- Lock-Overlay -->
+                        <div id="jobsLockOverlay" class="lock-overlay my-5">
+                            <h3 class="fw-bold mb-3">Geschützter Bereich</h3>
+                            <p class="text-muted mb-4">Dieser Bereich ist ausschließlich für die Verwaltung von
+                                Stellenangeboten reserviert.</p>
+                            <button onclick="checkJobsLock()"
+                                class="btn btn-magenta px-5 py-3 fw-bold text-uppercase">Bereich Freischalten</button>
+                        </div>
+
+                        <!-- Geschützter Content -->
+                        <div id="jobsContent" class="d-none">
+                            <div class="grid-split">
+                                <div class="card-panel p-4">
+                                    <h3 class="fw-bold mb-4 text-white pb-2 border-bottom border-secondary">Neues
+                                        Stellenangebot erfassen</h3>
+                                    <div id="jobAlert" class="alert d-none"></div>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label small text-white-50 fw-bold">Titel der
+                                                Stelle</label>
+                                            <input type="text" id="jobTitle"
+                                                class="form-control bg-dark text-white border-secondary py-2"
+                                                placeholder="z. B. Medientechnologe Druck (m/w/d)">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small text-white-50 fw-bold">Abteilung</label>
+                                            <select id="jobDept"
+                                                class="form-select bg-dark text-white border-secondary py-2">
+                                                <option value="Prepress / Druckvorstufe">Prepress / Druckvorstufe
+                                                </option>
+                                                <option value="Produktion / Bogenoffset">Produktion / Bogenoffset
+                                                </option>
+                                                <option value="Weiterverarbeitung / Postpress">Weiterverarbeitung /
+                                                    Postpress</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small text-white-50 fw-bold">Anstellungsart</label>
+                                            <input type="text" id="jobType"
+                                                class="form-control bg-dark text-white border-secondary py-2"
+                                                value="Ausbildung">
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small text-white-50 fw-bold">Beschreibung /
+                                                Aufgaben</label>
+                                            <textarea id="jobDesc" rows="6"
+                                                class="form-control bg-dark text-white border-secondary"
+                                                placeholder="Aufgaben eintragen..."></textarea>
+                                        </div>
+                                        <div class="col-12 mt-4">
+                                            <button onclick="submitJob()"
+                                                class="btn btn-magenta w-100 py-3 text-uppercase">Stelle live
+                                                veröffentlichen</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="liveJobsContainer" class="card-panel p-4 live-panel">
+                                    <h3 class="fw-bold mb-4 text-white pb-2 border-bottom border-secondary">Aktive
+                                        Live-Angebote</h3>
+                                    <div id="liveJobsList" class="list-group d-flex flex-column gap-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: ACTION-FLYOUT & E-MAIL-VORLAGEN -->
+                    <div class="tab-pane fade" id="panel-actions" role="tabpanel">
+                        <h2 class="fw-bold mb-4">⚡ E-Mail-Vorlagen & Action-Texte</h2>
+                        <div class="grid-split">
+                            <div class="card-panel p-4">
+                                <h4 class="fw-bold text-white mb-3">Neue E-Mail-Vorlage erstellen</h4>
+                                <div id="templateAlert" class="alert d-none"></div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-white-50 fw-bold">Vorlagen-Titel</label>
+                                    <input type="text" id="tplTitle"
+                                        class="form-control bg-dark text-white border-secondary"
+                                        placeholder="z. B. Standard-Angebot Vinyl">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-white-50 fw-bold">E-Mail Betreff</label>
+                                    <input type="text" id="tplSubject"
+                                        class="form-control bg-dark text-white border-secondary"
+                                        placeholder="Ihr Angebot von Druckerei Görner">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small text-white-50 fw-bold">Nachrichten-Inhalt</label>
+                                    <textarea id="tplContent" rows="6"
+                                        class="form-control bg-dark text-white border-secondary"
+                                        placeholder="Hallo {{kunde}},\n\nvielen Dank..."></textarea>
+                                </div>
+                                <button onclick="saveTemplate()" class="btn btn-magenta w-100 py-2">Vorlage
+                                    Speichern</button>
+                            </div>
+                            <div class="card-panel p-4">
+                                <h4 class="fw-bold text-white mb-3">Gespeicherte Vorlagen</h4>
+                                <div id="templatesList" class="list-group"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 5: COOKIE-EINWILLIGUNGEN -->
+                    <div class="tab-pane fade" id="panel-cookies" role="tabpanel">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="fw-bold">🍪 Cookie-Einwilligungen Protokoll</h2>
+                            <button onclick="loadCookieConsents()"
+                                class="btn btn-sm btn-outline-light px-3">Aktualisieren</button>
+                        </div>
+                        <div class="card-panel p-4">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-striped table-crm align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Zeitstempel</th>
+                                            <th>User Agent / Browser</th>
+                                            <th>Status / Typ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cookieTableBody">
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted py-4">Lade
+                                                Cookie-Protokolle...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 6: ASSETS -->
                     <div class="tab-pane fade" id="panel-images" role="tabpanel">
                         <h2 class="fw-bold mb-4">Webseiten-Assets & Bilder ändern</h2>
                         <div class="card-panel p-4" style="max-width: 650px;">
                             <div id="imageAlert" class="alert d-none"></div>
                             <div class="mb-3">
-                                <label class="form-label small text-white-50 fw-bold">Ziel-Bildkomponente ersetzen</label>
+                                <label class="form-label small text-white-50 fw-bold">Ziel-Bildkomponente
+                                    ersetzen</label>
                                 <select id="imageTargetId" class="form-select bg-dark text-white border-secondary py-2">
-                                    <option value="1ENmLOpM79-Lq_2oprfa-eXosZgnwzEnE">Vinyl-Konfigurator Hero-Hintergrundbild</option>
+                                    <option value="1ENmLOpM79-Lq_2oprfa-eXosZgnwzEnE">Vinyl-Konfigurator
+                                        Hero-Hintergrundbild</option>
                                     <option value="">Neues Asset im Drive hochladen</option>
                                 </select>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label small text-white-50 fw-bold">Bilddatei auswählen</label>
-                                <input type="file" id="imageFile" class="form-control bg-dark text-white border-secondary py-2" accept="image/*">
+                                <input type="file" id="imageFile"
+                                    class="form-control bg-dark text-white border-secondary py-2" accept="image/*">
                             </div>
-                            <button onclick="uploadImageAsset()" class="btn btn-magenta px-4 py-2">Bild-Asset synchronisieren</button>
+                            <button onclick="uploadImageAsset()" class="btn btn-magenta px-4 py-2">Bild-Asset
+                                synchronisieren</button>
                         </div>
                     </div>
 
@@ -140,104 +266,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            loadRequests();
-            loadLiveJobs();
-        });
+    <script src="js/dashboard.js"></script>
 
-        function loadRequests() {
-            google.script.run.withSuccessHandler(function(data) {
-                const tbody = document.querySelector("#requestsTable tbody");
-                if(!tbody) return;
-                if(data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Keine Anfragen vorhanden.</td></tr>';
-                    return;
-                }
-                tbody.innerHTML = data.map(r => `
-                    <tr>
-                        <td><span class="text-white-50 small">${r.timestamp}</span></td>
-                        <td><strong class="text-white">${r.kunde}</strong></td>
-                        <td><span class="text-info">${r.projekt}</span></td>
-                        <td><div class="small text-light p-2 rounded" style="white-space: pre-wrap; line-height: 1.4; background-color: #0f172a; border: 1px solid #334155;">${r.zusammenfassung}</div></td>
-                        <td><span class="badge ${r.status==='Neu'?'bg-danger':'bg-warning'}">${r.status}</span></td>
-                    </tr>
-                `).join('');
-            }).getFormRequests();
-        }
 
-        function loadLiveJobs() {
-            google.script.run.withSuccessHandler(function(data) {
-                const list = document.getElementById("liveJobsList");
-                if (!list) return;
-                if (data.length === 0) {
-                    list.innerHTML = '<p class="text-muted small text-center my-3">Keine aktiven Angebote auf der Live-Webseite.</p>';
-                    return;
-                }
-                list.innerHTML = data.map(j => `
-                    <div class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center p-3">
-                        <div>
-                            <h6 class="mb-1 fw-bold text-magenta">${j.titel}</h6>
-                            <small class="text-white-50">${j.abteilung} · ${j.art}</small>
-                        </div>
-                        <button onclick="removeJobLive('${j.rowId}')" class="btn btn-sm btn-outline-danger px-3">Entfernen</button>
-                    </div>
-                `).join('');
-            }).getLiveJobsBackend();
-        }
-
-        function submitJob() {
-            const t = document.getElementById("jobTitle").value;
-            const d = document.getElementById("jobDept").value;
-            const ty = document.getElementById("jobType").value;
-            const de = document.getElementById("jobDesc").value;
-            
-            if(!t || !de) { alert("Bitte Titel und Beschreibung ausfüllen."); return; }
-
-            google.script.run.withSuccessHandler(function(res) {
-                const alert = document.getElementById("jobAlert");
-                alert.className = "alert " + (res.success ? "alert-success" : "alert-danger");
-                alert.textContent = res.message;
-                alert.classList.remove("d-none");
-                if(res.success) {
-                    document.getElementById("jobTitle").value = "";
-                    document.getElementById("jobDesc").value = "";
-                    loadLiveJobs();
-                }
-            }).saveNewJobOffer(t, d, ty, de);
-        }
-
-        function removeJobLive(rowId) {
-            if(!confirm("Dieses Stellenangebot wirklich inaktiv setzen?")) return;
-            google.script.run.withSuccessHandler(function(res) {
-                if(res.success) loadLiveJobs();
-                else alert("Fehler: " + res.message);
-            }).deleteJobOfferBackend(rowId);
-        }
-
-        function uploadImageAsset() {
-            const fileInput = document.getElementById("imageFile");
-            const targetId = document.getElementById("imageTargetId").value;
-            if(fileInput.files.length === 0) return;
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function() {
-                google.script.run.withSuccessHandler(function(res) {
-                    const alert = document.getElementById("imageAlert");
-                    alert.className = "alert " + (res.success ? "alert-success" : "alert-danger");
-                    alert.textContent = res.success ? "Asset erfolgreich aktualisiert!" : res.message;
-                    alert.classList.remove("d-none");
-                }).updateCrmImage(reader.result, file.name, targetId);
-            };
-        }
-
-        function logout() {
-            google.script.run.withSuccessHandler(function() {
-                window.location.reload();
-            }).performLogoutBackend();
-        }
-    </script>
 </body>
+
 </html>

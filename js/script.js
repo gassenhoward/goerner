@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     // ==========================================================================
-    // 1. INTRO ANIMATION & CHRONIK-STACK ROTATOR (MULTISINGULAR RESILIENT)
+    // 1. INTRO ANIMATION & CHRONIK-STACK ROTATOR
     // ==========================================================================
     setTimeout(() => {
         const vinylWrapper = document.getElementById("heroVinylWrapper");
@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (packagingStage) { packagingStage.classList.add("loaded"); }
         if (heroText) { heroText.classList.add("visible"); }
         
-        // --- CHRONIK FOTO-STACK NATIVE ROTATIONS-ENGINE ---
         const photoStack = document.getElementById("historicalPhotoStack");
         const btnNext = document.getElementById("btnNextPhoto");
         
@@ -43,14 +42,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 const cards = Array.from(photoStack.querySelectorAll(".historical-photo-card"));
                 if (cards.length === 0) return;
 
-                // Das aktuelle Top-Element isolieren
                 const topCard = cards.find(card => card.classList.contains("pos-1"));
                 if (!topCard) return;
 
                 isRotating = true;
                 topCard.classList.add("swipe-out");
 
-                // Nach Abschluss der Swipe-Animation (650ms laut CSS) Klassen rotieren
                 setTimeout(() => {
                     cards.forEach(card => {
                         if (card.classList.contains("pos-1")) {
@@ -79,13 +76,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 }, 650);
             }
 
-            // Klick-Kopplung direkt auf den Stapel
             photoStack.addEventListener("click", function(e) {
                 e.preventDefault();
                 rotateChronikStack();
             });
 
-            // Klick-Kopplung auf den Aktions-Button
             if (btnNext) {
                 btnNext.addEventListener("click", function (e) {
                     e.preventDefault();
@@ -96,56 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 300);
 
     // ==========================================================================
-    // 2. VISUELLE KACHELN: INTERAKTIVES EINBLENDEN DER MENGEN UND EXTRAS
-    // ==========================================================================
-    const produktCheckboxes = [
-        "Produkt_Kastentasche_12", "Produkt_Kastentasche_10", "Produkt_Kastentasche_7",
-        "Produkt_Gatefold_12", "Produkt_Innentasche_12", "Produkt_Innentasche_10", "Produkt_Innentasche_7"
-    ];
-
-    produktCheckboxes.forEach(id => {
-        const cb = document.getElementById(id);
-        if (cb) {
-            cb.addEventListener("change", function () {
-                const detailDiv = document.getElementById("details_" + id);
-                if (detailDiv) {
-                    if (this.checked) {
-                        detailDiv.classList.remove("d-none");
-                    } else {
-                        detailDiv.classList.add("d-none");
-                        const inputs = detailDiv.querySelectorAll("input, select, textarea");
-                        inputs.forEach(input => {
-                            if (input.type === "checkbox" || input.type === "radio") {
-                                input.checked = false;
-                            } else {
-                                input.value = "";
-                            }
-                        });
-                    }
-                }
-                aktualisiereGesamtmengeSichtbarkeit();
-            });
-        }
-    });
-
-    function aktualisiereGesamtmengeSichtbarkeit() {
-        const gesamtMengeDiv = document.getElementById("gesamtmenge_block");
-        if (!gesamtMengeDiv) return;
-        
-        const irgendeinProduktAktiv = produktCheckboxes.some(id => {
-            const cb = document.getElementById(id);
-            return cb ? cb.checked : false;
-        });
-
-        if (irgendeinProduktAktiv) {
-            gesamtMengeDiv.classList.remove("d-none");
-        } else {
-            gesamtMengeDiv.classList.add("d-none");
-        }
-    }
-
-    // ==========================================================================
-    // 3. REAKTIVE MITTELLOCH-MATRIX FÜR LABELS & EINLEGER
+    // 2. REAKTIVE MITTELLOCH-MATRIX FÜR LABELS & EINLEGER
     // ==========================================================================
     const extraLabels = document.getElementById("Extra_Schallplatten_Labels");
     const extraEinleger = document.getElementById("Extra_Einleger_Booklets");
@@ -172,62 +118,33 @@ document.addEventListener("DOMContentLoaded", function () {
     if (optLochOpt) optLochOpt.addEventListener("change", checkHoleMatrix);
 
     // ==========================================================================
+    // 3. VINYL-KONFIGURATOR: INITIALISIERUNG
+    // ==========================================================================
+    const pTypeSelect = document.getElementById("configProductType");
+    const kartonSelect = document.getElementById("configKarton");
+    const lochSelect = document.getElementById("configLoch");
+
+    if (pTypeSelect) pTypeSelect.addEventListener("change", handleProductTypeChange);
+    if (kartonSelect) kartonSelect.addEventListener("change", updateGrammaturOptions);
+    if (lochSelect) lochSelect.addEventListener("change", handleHoleSelectionChange);
+
+    setDefaultLackCello();
+    handleProductTypeChange();
+
+    // ==========================================================================
     // 4. AJAX FORMULAR-VERSAND AN DAS CRM BACKEND
     // ==========================================================================
     const vinylForm = document.getElementById("vinylContactForm");
     const vSubmitBtn = document.getElementById("vSubmitBtn");
-    const vFileResetBtn = document.getElementById("vFileResetBtn");
 
     if (vinylForm) {
         vinylForm.addEventListener("submit", function (event) {
-            
-            const hatProdukt = produktCheckboxes.some(name => {
-                const el = vinylForm.querySelector(`[name="${name}"]`);
-                return el ? el.checked : false;
-            });
+            event.preventDefault();
 
-            const hatRuecken = [
-                "Ruecken_Ohne", "Ruecken_3mm", "Ruecken_6mm", "Ruecken_7mm", "Ruecken_10mm"
-            ].some(name => {
-                const el = vinylForm.querySelector(`[name="${name}"]`);
-                return el ? el.checked : false;
-            });
-
-            const hatKarton = [
-                "Karton_Chromokarton", "Karton_Kraftkarton", "Karton_Graukarton", "Karton_Sulfatkarton"
-            ].some(name => {
-                const el = vinylForm.querySelector(`[name="${name}"]`);
-                return el ? el.checked : false;
-            });
-
-            const hatFarbigkeit = [
-                "Farbe_4c", "Farbe_1c", "Farbe_Sonder"
-            ].some(name => {
-                const el = vinylForm.querySelector(`[name="${name}"]`);
-                return el ? el.checked : false;
-            });
-
-            const hatGrammatur = [
-                "Gramm_180", "Gramm_GZ1_190", "Gramm_GC1_200", "Gramm_300", "Gramm_GC1_300",
-                "Gramm_350", "Gramm_GC1_350", "Gramm_Andere"
-            ].some(name => {
-                const el = vinylForm.querySelector(`[name="${name}"]`);
-                return el ? el.checked : false;
-            });
-
-            if (!hatProdukt || !hatRuecken || !hatKarton || !hatFarbigkeit || !hatGrammatur) {
-                event.preventDefault();
-                let fehler = "Bitte füllen Sie folgende Pflichtbereiche aus:\n";
-                if (!hatProdukt) fehler += "• Mindestens einen Produkt-Typ auswählen\n";
-                if (!hatRuecken) fehler += "• Mindestens eine Rückenbreite auswählen\n";
-                if (!hatKarton) fehler += "• Mindestens eine Kartonsorte auswählen\n";
-                if (!hatFarbigkeit) fehler += "• Mindestens eine Farbigkeit auswählen\n";
-                if (!hatGrammatur) fehler += "• Mindestens eine Grammatur auswählen\n";
-                alert(fehler);
+            if (basketItems.length === 0) {
+                alert("Bitte fügen Sie mindestens eine Komponente zu Ihrer Anfrage hinzu.");
                 return;
             }
-
-            event.preventDefault();
 
             if (vSubmitBtn) {
                 vSubmitBtn.disabled = true;
@@ -237,55 +154,25 @@ document.addEventListener("DOMContentLoaded", function () {
             const formData = new FormData(this);
             const fileInput = document.getElementById("vFile");
 
-            const rueckenbreiten = [];
-            if (formData.get("Ruecken_Ohne")) rueckenbreiten.push("Ohne Rücken");
-            if (formData.get("Ruecken_3mm")) rueckenbreiten.push("3 mm");
-            if (formData.get("Ruecken_6mm")) rueckenbreiten.push("6 mm");
-            if (formData.get("Ruecken_7mm")) rueckenbreiten.push("7 mm");
-            if (formData.get("Ruecken_10mm")) rueckenbreiten.push("10 mm");
+            let crmZeilenArray = basketItems.map((item, idx) => {
+                let zeile = `${idx + 1}. ${item.pType} [Menge: ${item.amount} Stk.]\n`;
+                if (item.karton !== '-') zeile += `   • Material: ${item.karton} (${item.grammatur})\n`;
+                if (item.farbe !== '-') zeile += `   • Farbigkeit: ${item.farbe}\n`;
+                if (item.innendruck !== '-') zeile += `   • Innendruck: ${item.innendruck}\n`;
+                if (item.verarbeitung !== '-') zeile += `   • Veredelung: ${item.verarbeitung}\n`;
+                if (item.lackCello !== '-') zeile += `   • Lack/Cello: ${item.lackCello}\n`;
+                if (item.loch !== '-') zeile += `   • Mittellöcher: ${item.loch}\n`;
+                if (item.hinweis) zeile += `   • HINWEIS: ${item.hinweis}\n`;
+                return zeile;
+            });
 
-            const kartonsorten = [];
-            if (formData.get("Karton_Chromokarton")) kartonsorten.push("Chromokarton (GC1)");
-            if (formData.get("Karton_Kraftkarton")) kartonsorten.push("Kraftkarton");
-            if (formData.get("Karton_Graukarton")) kartonsorten.push("Graukarton");
-            if (formData.get("Karton_Sulfatkarton")) kartonsorten.push("Sulfatkarton (GZ1)");
-
-            const farbAuswahl = [];
-            if (formData.get("Farbe_4c")) farbAuswahl.push("4/4-farbig (CMYK)");
-            if (formData.get("Farbe_1c")) farbAuswahl.push("1/1-farbig (Schwarz/Weiß)");
-            if (formData.get("Farbe_Sonder")) farbAuswahl.push("Sonderfarbe");
-
-            const grammAuswahl = [];
-            if (formData.get("Gramm_180")) grammAuswahl.push("180 g/m²");
-            if (formData.get("Gramm_GZ1_190")) grammAuswahl.push("190 g/m²");
-            if (formData.get("Gramm_GC1_200")) grammAuswahl.push("200 g/m²");
-            if (formData.get("Gramm_300")) grammAuswahl.push("300 g/m²");
-            if (formData.get("Gramm_GC1_300")) grammAuswahl.push("300 g/m² (GC1)");
-            if (formData.get("Gramm_350")) grammAuswahl.push("350 g/m²");
-            if (formData.get("Gramm_GC1_350")) grammAuswahl.push("350 g/m² (GC1)");
-            const freitextGrammatur = formData.get("grammaturDetails") || "";
-            if (formData.get("Gramm_Andere")) {
-                grammAuswahl.push(freitextGrammatur.trim() !== "" ? freitextGrammatur : "Andere Grammatur");
+            const gesamtStueckzahl = basketItems.reduce((acc, curr) => acc + parseInt(curr.amount, 10), 0).toString();
+            
+            let kundenNachricht = formData.get("message") || "";
+            const abweichungen = basketItems.filter(i => i.hinweis).map(i => `${i.pType}: ${i.hinweis}`);
+            if (abweichungen.length > 0) {
+                kundenNachricht += (kundenNachricht ? "\n\n" : "") + "[System-Hinweise Abweichungen]:\n" + abweichungen.join("\n");
             }
-
-            const veredelungen = [];
-            if (formData.get("Veredelung_Heissfolie")) veredelungen.push("Heißfolienprägung");
-            if (formData.get("Veredelung_Lack")) veredelungen.push("Partielle Lackierung");
-            if (formData.get("Veredelung_Blindpraegung")) veredelungen.push("Blindprägung");
-            if (formData.get("Veredelung_Stanzung")) veredelungen.push("Stanzung");
-
-            const dispersionCello = [];
-            if (formData.get("Disp_Glanz")) dispersionCello.push("Dispersionslack glanz");
-            if (formData.get("Disp_Matt")) dispersionCello.push("Dispersionslack matt");
-            if (formData.get("Cello_Glanz")) dispersionCello.push("Cellophanierung glanz");
-            if (formData.get("Cello_Matt")) dispersionCello.push("Cellophanierung matt (kratzfest)");
-
-            const extrasList = [];
-            if (formData.get("Extra_Innendruck")) extrasList.push("Innendruck der Tasche");
-            if (formData.get("Extra_Optimierte_Mittelloecher")) extrasList.push("Optimierte Mittellöcher");
-            if (formData.get("Extra_Zentrierte_Mittelloecher")) extrasList.push("Zentrierte Mittellöcher");
-            if (formData.get("Extra_Schallplatten_Labels")) extrasList.push("Labels");
-            if (formData.get("Extra_Einleger_Booklets")) extrasList.push("Einleger & Booklets");
 
             const dataObject = {
                 formType: "vinyl",
@@ -294,51 +181,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: formData.get("name") || "",
                 email: formData.get("email") || "",
                 phone: formData.get("phone") || "",
-                
-                Produkt_Kastentasche_12: formData.get("Produkt_Kastentasche_12") ? true : false,
-                Produkt_Kastentasche_10: formData.get("Produkt_Kastentasche_10") ? true : false,
-                Produkt_Kastentasche_7: formData.get("Produkt_Kastentasche_7") ? true : false,
-                Produkt_Gatefold_12: formData.get("Produkt_Gatefold_12") ? true : false,
-                Produkt_Innentasche_12: formData.get("Produkt_Innentasche_12") ? true : false,
-                Produkt_Innentasche_10: formData.get("Produkt_Innentasche_10") ? true : false,
-                Produkt_Innentasche_7: formData.get("Produkt_Innentasche_7") ? true : false,
-                
-                stueckzahl_Kastentasche_12: formData.get("stueckzahl_Kastentasche_12") || "",
-                extras_Kastentasche_12: formData.get("extras_Kastentasche_12") || "",
-                stueckzahl_Kastentasche_10: formData.get("stueckzahl_Kastentasche_10") || "",
-                extras_Kastentasche_10: formData.get("extras_Kastentasche_10") || "",
-                stueckzahl_Kastentasche_7: formData.get("stueckzahl_Kastentasche_7") || "",
-                extras_Kastentasche_7: formData.get("extras_Kastentasche_7") || "",
-                stueckzahl_Gatefold_12: formData.get("stueckzahl_Gatefold_12") || "",
-                extras_Gatefold_12: formData.get("extras_Gatefold_12") || "",
-                stueckzahl_Innentasche_12: formData.get("stueckzahl_Innentasche_12") || "",
-                extras_Innentasche_12: formData.get("extras_Innentasche_12") || "",
-                stueckzahl_Innentasche_10: formData.get("stueckzahl_Innentasche_10") || "",
-                extras_Innentasche_10: formData.get("extras_Innentasche_10") || "",
-                stueckzahl_Innentasche_7: formData.get("stueckzahl_Innentasche_7") || "",
-                extras_Innentasche_7: formData.get("extras_Innentasche_7") || "",
-                
-                Gatefold_Kraftkarton: formData.get("Gatefold_Kraftkarton") ? true : false,
-                Gatefold_Graukarton: formData.get("Gatefold_Graukarton") ? true : false,
-                
-                stueckzahl_Labels: formData.get("stueckzahl_Labels") || "",
-                stueckzahl_Einleger: formData.get("stueckzahl_Einleger") || "",
-                
-                rueckenbreite: rueckenbreiten.join(", ") || "Keine Auswahl",
-                veredelung: veredelungen.join(", ") || "Keine Auswahl",
-                kartonsorte: kartonsorten.join(", ") || "Keine Auswahl",
-                
-                farbigkeit: farbAuswahl.join(", ") || "Keine Auswahl",
-                sonderfarbeDetails: formData.get("sonderfarbeDetails") || "",
-                grammatur: grammAuswahl.join(", ") || "Keine Auswahl",
-                dispersionCello: dispersionCello.join(", ") || "Keine Auswahl",
-                
-                insideOut: formData.get("Verarbeitung_Inside_Out") ? true : false,
-                extras: extrasList.join(", ") || "Keine Auswahl",
-                
-                stueckzahl: formData.get("stueckzahl") || "",
+                stueckzahl: gesamtStueckzahl,
+                projektZusammenfassung: crmZeilenArray.join("\n"),
                 datenlink: formData.get("datenlink") || "", 
-                message: formData.get("message") || ""
+                message: kundenNachricht
             };
 
             function sendData(payload) {
@@ -358,9 +204,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         } else {
                             alert("Danke! Ihre Spezifikations-Anfrage wurde erfolgreich übermittelt.");
                         }
+                        
                         vinylForm.reset();
-                        document.querySelectorAll(".product-detail-fields").forEach(d => d.classList.add("d-none"));
-                        if (vFileResetBtn) vFileResetBtn.classList.add("d-none");
+                        clearFileInput();
+                        basketItems = [];
+                        renderBasket();
+                        resetFormFields();
                         checkHoleMatrix();
                     } else {
                         alert("CRM-Fehler: " + data.meldung);
@@ -372,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .finally(() => {
                     if (vSubmitBtn) {
                         vSubmitBtn.disabled = false;
-                        vSubmitBtn.textContent = "Spezifikations-Anfrage absenden";
+                        vSubmitBtn.textContent = "Gesamtanfrage absenden";
                     }
                 });
             }
@@ -391,22 +240,86 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+});
 
-        
-        // ==========================================================================
-// VINYL-KONFIGURATOR: REAKTIVE GRAMMATUR-AUSWAHLMATRIX
 // ==========================================================================
+// GLOBALE LOGIK-FUNKTIONEN FÜR DEN VINYL-KONFIGURATOR
+// ==========================================================================
+let basketItems = [];
+
+function toggleFileClearBtn() {
+    const fileInput = document.getElementById("vFile");
+    const clearBtn = document.getElementById("vFileClearBtn");
+    if (fileInput && clearBtn) {
+        if (fileInput.files.length > 0) {
+            clearBtn.classList.remove("d-none");
+        } else {
+            clearBtn.classList.add("d-none");
+        }
+    }
+}
+
+function clearFileInput() {
+    const fileInput = document.getElementById("vFile");
+    const clearBtn = document.getElementById("vFileClearBtn");
+    if (fileInput) fileInput.value = "";
+    if (clearBtn) clearBtn.classList.add("d-none");
+}
+
+function setDefaultLackCello() {
+    const lackCelloSelect = document.getElementById("configLackCello");
+    if (lackCelloSelect) {
+        lackCelloSelect.value = "Dispersionslack glanz";
+    }
+}
+
+function handleProductTypeChange() {
+    const pTypeEl = document.getElementById("configProductType");
+    if (!pTypeEl) return;
+    const pType = pTypeEl.value;
+    
+    const kartonWrapper = document.getElementById("configKarton")?.closest('.form-grid-inner') || document.getElementById("configKarton")?.parentElement;
+    const farbeGroup = document.getElementById("farbeKachelnGroup")?.parentElement;
+    const innendruckGroup = document.getElementById("innendruckKachelnGroup")?.parentElement;
+    const verarbeitungGroup = document.getElementById("verarbeitungKachelnGroup")?.parentElement;
+    const lackWrapper = document.getElementById("configLackCello")?.parentElement;
+    const lochWrapper = document.getElementById("configLoch")?.parentElement;
+
+    if (kartonWrapper) kartonWrapper.classList.remove("d-none");
+    if (farbeGroup) farbeGroup.classList.remove("d-none");
+    if (innendruckGroup) innendruckGroup.classList.remove("d-none");
+    if (verarbeitungGroup) verarbeitungGroup.classList.remove("d-none");
+    if (lackWrapper) lackWrapper.classList.remove("d-none");
+    if (lochWrapper) lochWrapper.classList.remove("d-none");
+
+    if (pType === "Schallplatten-Labels") {
+        if (kartonWrapper) kartonWrapper.classList.add("d-none");
+        if (innendruckGroup) innendruckGroup.classList.add("d-none");
+        if (verarbeitungGroup) verarbeitungGroup.classList.add("d-none");
+        if (lackWrapper) lackWrapper.classList.add("d-none");
+        if (lochWrapper) lochWrapper.classList.add("d-none");
+    } else if (pType === "Einleger / Booklets") {
+        if (innendruckGroup) innendruckGroup.classList.add("d-none");
+        if (lackWrapper) lackWrapper.classList.add("d-none");
+    }
+
+    updateGrammaturOptions();
+    resetHoleWarningState();
+}
+
 function updateGrammaturOptions() {
-    const pType = document.getElementById("configProductType").value;
-    const karton = document.getElementById("configKarton").value;
+    const pTypeEl = document.getElementById("configProductType");
+    const kartonEl = document.getElementById("configKarton");
     const grammSelect = document.getElementById("configGrammatur");
     
-    if (!grammSelect) return;
+    if (!grammSelect || !pTypeEl || !kartonEl) return;
+    
+    const pType = pTypeEl.value;
+    const karton = kartonEl.value;
     grammSelect.innerHTML = "";
     
     let optionen = [];
     
-    // Logik-Matrix für Gatefold vs. Standard-Produkte
     if (pType === "12\" Gatefold") {
         if (karton === "Chromokarton") {
             optionen = ["300 g/m²", "350 g/m²"];
@@ -416,7 +329,6 @@ function updateGrammaturOptions() {
             optionen = ["350 g/m²"];
         }
     } else {
-        // Standard-Produkte (Kastentaschen, Innentaschen etc.)
         if (karton === "Chromokarton") {
             optionen = ["200 g/m²", "300 g/m²", "350 g/m²"];
         } else if (karton === "Kraftkarton") {
@@ -440,14 +352,272 @@ function updateGrammaturOptions() {
     });
 }
 
-// Event-Kopplung für reaktive UI-Wechsel (im bereits laufenden DOMContentLoaded-Handler)
-const pTypeSelect = document.getElementById("configProductType");
-const kartonSelect = document.getElementById("configKarton");
+function toggleSonderfarbeField() {
+    const chkSonder = document.getElementById("chk_farbe_sonder");
+    const sonderfarbeWrapper = document.getElementById("sonderfarbeWrapper");
+    if (!chkSonder || !sonderfarbeWrapper) return;
 
-if (pTypeSelect) pTypeSelect.addEventListener("change", updateGrammaturOptions);
-if (kartonSelect) kartonSelect.addEventListener("change", updateGrammaturOptions);
+    if (chkSonder.checked) {
+        sonderfarbeWrapper.classList.remove("d-none");
+    } else {
+        sonderfarbeWrapper.classList.add("d-none");
+        const detailsInput = document.getElementById("configSonderfarbeDetails");
+        if (detailsInput) detailsInput.value = "";
+    }
+}
 
-// Initialer Trigger zur ersten Befüllung des Dropdowns
-updateGrammaturOptions();
+function handleKeinInnendruckToggle() {
+    const chkKein = document.getElementById("chk_innendruck_kein");
+    if (chkKein && chkKein.checked) {
+        document.getElementById("chk_innendruck_4c").checked = false;
+        document.getElementById("chk_innendruck_1c").checked = false;
+        document.getElementById("chk_innendruck_sonder").checked = false;
+        toggleInnendruckSonderfarbeField();
+    }
+}
 
-});         
+function toggleInnendruckSonderfarbeField() {
+    const chkSonder = document.getElementById("chk_innendruck_sonder");
+    const wrapper = document.getElementById("innendruckSonderfarbeWrapper");
+    if (!chkSonder || !wrapper) return;
+
+    if (chkSonder.checked) {
+        document.getElementById("chk_innendruck_kein").checked = false;
+        wrapper.classList.remove("d-none");
+    } else {
+        wrapper.classList.add("d-none");
+        const detailsInput = document.getElementById("configInnendruckSonderfarbeDetails");
+        if (detailsInput) detailsInput.value = "";
+    }
+}
+
+function validateStep100(input) {
+    let val = parseInt(input.value, 10);
+    if (isNaN(val) || val < 100) val = 100;
+    val = Math.round(val / 100) * 100;
+    input.value = val;
+}
+
+function handleHoleSelectionChange() {
+    const holeSelect = document.getElementById("configLoch");
+    const warningContainer = document.getElementById("holeWarningContainer");
+    const warningText = document.getElementById("holeWarningText");
+    const confirmationCheckbox = document.getElementById("configLochBestaetigung");
+
+    if (!holeSelect || !warningContainer || !warningText) return;
+
+    const val = holeSelect.value;
+    if (val === "Zentriert") {
+        warningText.textContent = `Hinweis: Die Auswahl "Zentriert" weicht vom Standard ("Automatisch optimiert") ab. Bitte bestätigen Sie die Abweichung.`;
+        warningContainer.classList.remove("d-none");
+    } else {
+        warningContainer.classList.add("d-none");
+        if (confirmationCheckbox) confirmationCheckbox.checked = false;
+    }
+}
+
+function resetHoleWarningState() {
+    const warningContainer = document.getElementById("holeWarningContainer");
+    const confirmationCheckbox = document.getElementById("configLochBestaetigung");
+    const holeSelect = document.getElementById("configLoch");
+    if (holeSelect) holeSelect.value = "Automatisch optimiert";
+    if (warningContainer) warningContainer.classList.add("d-none");
+    if (confirmationCheckbox) confirmationCheckbox.checked = false;
+}
+
+function getSelectedFarbeValues() {
+    const selected = [];
+    if (document.getElementById("chk_farbe_4c")?.checked) selected.push("4/4-farbig");
+    if (document.getElementById("chk_farbe_1c")?.checked) selected.push("1/1-farbig");
+    
+    if (document.getElementById("chk_farbe_sonder")?.checked) {
+        const details = document.getElementById("configSonderfarbeDetails")?.value.trim();
+        selected.push(details ? `Sonderfarbe (${details})` : "Sonderfarbe");
+    }
+    return selected.length > 0 ? selected.join(" + ") : "Keine Auswahl";
+}
+
+function getSelectedInnendruckValues() {
+    if (document.getElementById("chk_innendruck_kein")?.checked) return "Kein Innendruck";
+
+    const selected = [];
+    if (document.getElementById("chk_innendruck_4c")?.checked) selected.push("4/4-farbig");
+    if (document.getElementById("chk_innendruck_1c")?.checked) selected.push("1/1-farbig");
+    
+    if (document.getElementById("chk_innendruck_sonder")?.checked) {
+        const details = document.getElementById("configInnendruckSonderfarbeDetails")?.value.trim();
+        selected.push(details ? `Sonderfarbe (${details})` : "Sonderfarbe");
+    }
+    return selected.length > 0 ? selected.join(" + ") : "Kein Innendruck";
+}
+
+function getSelectedVerarbeitungValues() {
+    const selected = [];
+    if (document.getElementById("chk_verarb_heissfolie")?.checked) selected.push("Heißfolienprägung");
+    if (document.getElementById("chk_verarb_lack")?.checked) selected.push("Partielle Lackierung");
+    if (document.getElementById("chk_verarb_blind")?.checked) selected.push("Blindprägung");
+    if (document.getElementById("chk_verarb_stanzung")?.checked) selected.push("Stanzung");
+    if (document.getElementById("chk_verarb_insideout")?.checked) selected.push("Inside Out");
+    return selected.length > 0 ? selected.join(" + ") : "Keine";
+}
+
+function addProductToBasket() {
+    const holeSelect = document.getElementById("configLoch");
+    const confirmationCheckbox = document.getElementById("configLochBestaetigung");
+
+    let abweichungBestaetigt = false;
+    if (holeSelect && holeSelect.value === "Zentriert") {
+        if (confirmationCheckbox && !confirmationCheckbox.checked) {
+            alert("Bitte bestätigen Sie die Abweichung bei den Mittellöchern, bevor Sie das Produkt hinzufügen.");
+            return;
+        }
+        if (confirmationCheckbox && confirmationCheckbox.checked) {
+            abweichungBestaetigt = true;
+        }
+    }
+
+    const pType = document.getElementById("configProductType") ? document.getElementById("configProductType").value : "";
+
+    let item = {
+        id: Date.now(),
+        pType: pType,
+        amount: document.getElementById("configAmount") ? document.getElementById("configAmount").value : "100",
+        farbe: getSelectedFarbeValues(),
+        hinweis: abweichungBestaetigt ? "Abweichung Mittellöcher Zentriert ausdrücklich gewünscht" : ""
+    };
+
+    if (pType === "Schallplatten-Labels") {
+        item.karton = "-";
+        item.grammatur = "-";
+        item.innendruck = "-";
+        item.verarbeitung = "-";
+        item.lackCello = "-";
+        item.loch = "-";
+    } else if (pType === "Einleger / Booklets") {
+        item.karton = document.getElementById("configKarton") ? document.getElementById("configKarton").value : "";
+        item.grammatur = document.getElementById("configGrammatur") ? document.getElementById("configGrammatur").value : "";
+        item.innendruck = "-";
+        item.verarbeitung = getSelectedVerarbeitungValues();
+        item.lackCello = "-";
+        item.loch = holeSelect ? holeSelect.value : "Automatisch optimiert";
+    } else {
+        item.karton = document.getElementById("configKarton") ? document.getElementById("configKarton").value : "";
+        item.grammatur = document.getElementById("configGrammatur") ? document.getElementById("configGrammatur").value : "";
+        item.innendruck = getSelectedInnendruckValues();
+        item.verarbeitung = getSelectedVerarbeitungValues();
+        item.lackCello = document.getElementById("configLackCello") ? document.getElementById("configLackCello").value : "";
+        item.loch = holeSelect ? holeSelect.value : "Automatisch optimiert";
+    }
+
+    basketItems.push(item);
+    renderBasket();
+    resetFormFields();
+}
+
+/* ==========================================================================
+   INTERAKTIVE KACHEL-MUTEX-LOGIK (FARBIGKEIT & INNENDRUCK)
+   ========================================================================== */
+
+// --- FARBIGKEIT (1c vs. 4c exklusiv, Sonderfarbe frei) ---
+function handleFarbigkeitToggle(selectedId) {
+    const chk4c = document.getElementById("chk_farbe_4c");
+    const chk1c = document.getElementById("chk_farbe_1c");
+
+    if (selectedId === "chk_farbe_4c" && chk4c && chk4c.checked) {
+        if (chk1c) chk1c.checked = false;
+    } else if (selectedId === "chk_farbe_1c" && chk1c && chk1c.checked) {
+        if (chk4c) chk4c.checked = false;
+    }
+}
+
+// --- INNENDRUCK (Kein vs. 4c vs. 1c exklusiv, Sonderfarbe frei) ---
+function handleInnendruckToggle(selectedId) {
+    const chkKein = document.getElementById("chk_innendruck_kein");
+    const chk4c = document.getElementById("chk_innendruck_4c");
+    const chk1c = document.getElementById("chk_innendruck_1c");
+
+    if (selectedId === "chk_innendruck_kein" && chkKein && chkKein.checked) {
+        if (chk4c) chk4c.checked = false;
+        if (chk1c) chk1c.checked = false;
+    } else if (selectedId === "chk_innendruck_4c" && chk4c && chk4c.checked) {
+        if (chkKein) chkKein.checked = false;
+        if (chk1c) chk1c.checked = false;
+    } else if (selectedId === "chk_innendruck_1c" && chk1c && chk1c.checked) {
+        if (chkKein) chkKein.checked = false;
+        if (chk4c) chk4c.checked = false;
+    }
+}
+
+function resetFormFields() {
+    document.querySelectorAll("#farbeKachelnGroup input[type='checkbox'], #verarbeitungKachelnGroup input[type='checkbox'], #innendruckKachelnGroup input[type='checkbox']").forEach(cb => cb.checked = false);
+    
+    const chk4c = document.getElementById("chk_farbe_4c");
+    const chkKeinInnen = document.getElementById("chk_innendruck_kein");
+    if (chk4c) chk4c.checked = true;
+    if (chkKeinInnen) chkKeinInnen.checked = true;
+
+    toggleSonderfarbeField();
+    toggleInnendruckSonderfarbeField();
+    resetHoleWarningState();
+    setDefaultLackCello();
+}
+
+function renderBasket() {
+    const basketList = document.getElementById("basketList");
+    const emptyMsg = document.getElementById("basketEmptyMessage");
+    if (!basketList) return;
+
+    basketList.innerHTML = "";
+
+    if (basketItems.length === 0) {
+        if (emptyMsg) emptyMsg.classList.remove("d-none");
+        basketList.appendChild(emptyMsg);
+        return;
+    }
+
+    if (emptyMsg) emptyMsg.classList.add("d-none");
+
+    basketItems.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "list-group-item d-flex justify-content-between align-items-center mb-2";
+        div.innerHTML = `
+            <div>
+                <strong class="text-magenta">${item.pType}</strong> (${item.amount} Stk.)<br>
+                <small class="text-muted">
+                    ${item.karton !== '-' ? item.karton + ' ' + item.grammatur + ' | ' : ''}
+                    Farbe: ${item.farbe}
+                    ${item.innendruck !== '-' ? ' | Innendruck: ' + item.innendruck : ''}
+                    ${item.verarbeitung !== '-' ? ' | Verarb.: ' + item.verarbeitung : ''}
+                    ${item.lackCello !== '-' ? ' | Lack/Cello: ' + item.lackCello : ''}
+                    ${item.loch !== '-' ? ' | Löcher: ' + item.loch : ''}
+                    ${item.hinweis ? '<br><span class="text-warning">⚠ ' + item.hinweis + '</span>' : ''}
+                </small>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeBasketItem(${item.id})">✕</button>
+        `;
+        basketList.appendChild(div);
+    });
+}
+
+function removeBasketItem(id) {
+    basketItems = basketItems.filter(item => item.id !== id);
+    renderBasket();
+}
+
+function saveCookieConsent(acceptedType) {
+    const consentData = {
+        formType: "cookie_consent",
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        consentType: acceptedType
+    };
+
+    localStorage.setItem("goerner_cookie_consent", acceptedType);
+
+    fetch("https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(consentData)
+    });
+}

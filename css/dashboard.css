@@ -1,109 +1,253 @@
 /* ==========================================================================
-   CI-DESIGN FÜR KONFIGURATOR (vinyl.html) & CRM-DASHBOARD (Dashboard.html)
+   ENTERPRISE B2B DESIGN SYSTEM FOR CRM DASHBOARD (css/dashboard.css)
    ========================================================================== */
-body {
-    background-color: #0f172a;
-    color: #f8fafc;
-    font-family: 'Segoe UI', Arial, sans-serif;
+
+:root {
+    --crm-bg-main: #f8fafc;
+    --crm-sidebar-bg: #ffffff;
+    --crm-card-bg: #ffffff;
+    --crm-border-color: #cbd5e1;
+    --crm-border-hover: #94a3b8;
+    
+    --crm-text-primary: #0f172a;
+    --crm-text-secondary: #334155;
+    --crm-text-muted: #64748b;
+    
+    --crm-accent-magenta: #e60072;
+    --crm-accent-magenta-light: #fdf2f8;
+    --crm-accent-magenta-hover: #c40061;
+    
+    --crm-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+    --crm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
 }
 
+body {
+    background-color: var(--crm-bg-main);
+    color: var(--crm-text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* SIDEBAR INTEGRATION */
 .sidebar {
-    background-color: #1e293b;
+    background-color: var(--crm-sidebar-bg);
     min-height: 100vh;
-    border-right: 2px solid #ff007f;
+    border-right: 1px solid var(--crm-border-color);
+    box-shadow: var(--crm-shadow-sm);
+}
+
+.sidebar h4 {
+    color: var(--crm-text-primary) !important;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 .nav-link {
-    color: #94a3b8;
+    color: var(--crm-text-secondary);
     font-weight: 600;
+    font-size: 1.05rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    transition: all 0.15s ease-in-out;
+}
+
+.nav-link:hover {
+    color: var(--crm-text-primary);
+    background-color: #f1f5f9;
 }
 
 .nav-link.active {
-    color: #fff;
-    background-color: #ff007f !important;
+    color: var(--crm-accent-magenta) !important;
+    background-color: var(--crm-accent-magenta-light) !important;
+    font-weight: 700;
 }
 
-#panel-jobs {
+/* CARDS & PANELS */
+.grid-split {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.75rem;
+    align-items: start;
 }
 
 @media (min-width: 992px) {
-    #panel-jobs {
-        grid-template-columns: 1.2fr 1fr;
-        max-width: 100% !important;
+    .grid-split {
+        grid-template-columns: 1.25fr 1fr;
     }
 }
 
 .card-panel {
-    background-color: #1e293b;
-    border: 1px solid #334155;
+    background-color: var(--crm-card-bg);
+    border: 1px solid var(--crm-border-color);
     border-radius: 8px;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    box-shadow: var(--crm-shadow-sm);
 }
 
-#liveJobsContainer {
-    border-left: 3px solid #ff007f;
-    background-color: #111827;
+.live-panel {
+    border-left: 4px solid var(--crm-accent-magenta);
+    background-color: #ffffff;
 }
 
-#liveJobsContainer h3 {
-    font-size: 1.25rem;
+/* TABELLEN ZUSTÄNDE */
+.table-crm {
+    color: var(--crm-text-primary);
+    font-size: 0.95rem;
+    margin-bottom: 0;
+}
+
+.table-crm th {
+    background-color: #f8fafc;
+    color: var(--crm-text-secondary);
     font-weight: 700;
-    color: #ffffff;
-    margin-bottom: 1.25rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--crm-border-color);
+    padding: 0.85rem 1rem;
 }
 
+.table-crm td {
+    padding: 1rem 1rem;
+    border-bottom: 1px solid var(--crm-border-color);
+    vertical-align: middle;
+}
+
+.table-crm tbody tr {
+    background-color: #ffffff;
+    transition: background-color 0.12s ease;
+}
+
+.table-crm tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+
+/* STATUS BADGES */
+.badge {
+    padding: 0.45em 0.75em;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 4px;
+}
+
+.badge.bg-danger {
+    background-color: #fef2f2 !important;
+    color: #dc2626 !important;
+    border: 1px solid #fecaca;
+}
+
+.badge.bg-warning {
+    background-color: #fffbeb !important;
+    color: #d97706 !important;
+    border: 1px solid #fde68a;
+}
+
+.badge.bg-success {
+    background-color: #f0fdf4 !important;
+    color: #16a34a !important;
+    border: 1px solid #bbf7d0;
+}
+
+.badge.bg-secondary {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1;
+}
+
+.badge.bg-info {
+    background-color: #eff6ff !important;
+    color: #2563eb !important;
+    border: 1px solid #bfdbfe;
+}
+
+/* BUTTONS */
+.btn-magenta {
+    background-color: var(--crm-accent-magenta) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--crm-accent-magenta) !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    box-shadow: var(--crm-shadow-sm);
+    transition: all 0.15s ease;
+}
+
+.btn-magenta:hover {
+    background-color: var(--crm-accent-magenta-hover) !important;
+    border-color: var(--crm-accent-magenta-hover) !important;
+}
+
+.btn-outline-magenta {
+    color: var(--crm-accent-magenta) !important;
+    border: 1px solid var(--crm-border-color) !important;
+    background-color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    transition: all 0.15s ease;
+}
+
+.btn-outline-magenta:hover {
+    background-color: var(--crm-accent-magenta-light) !important;
+    border-color: var(--crm-accent-magenta) !important;
+    color: var(--crm-accent-magenta) !important;
+}
+
+/* FORMULARE */
+.form-label {
+    color: var(--crm-text-secondary);
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+.form-control, .form-select {
+    background-color: #ffffff !important;
+    border: 1px solid var(--crm-border-color) !important;
+    color: var(--crm-text-primary) !important;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--crm-accent-magenta) !important;
+    box-shadow: 0 0 0 3px rgba(230, 0, 114, 0.1) !important;
+}
+
+.form-control::placeholder {
+    color: var(--crm-text-muted) !important;
+}
+
+/* LIST ITEMS */
 .list-group-item {
-    transition: all 0.2s ease-in-out;
+    background-color: #ffffff !important;
+    border: 1px solid var(--crm-border-color) !important;
+    color: var(--crm-text-primary) !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
     border-radius: 6px !important;
 }
 
 .list-group-item:hover {
-    background-color: #1f2937 !important;
-    border-color: #ff007f !important;
+    border-color: var(--crm-border-hover) !important;
+    box-shadow: var(--crm-shadow-sm);
 }
 
-.form-control:focus,
-.form-select:focus {
-    border-color: #ff007f !important;
-    box-shadow: 0 0 0 0.25rem rgba(255, 0, 127, 0.25) !important;
+/* GESCHÜTZTE BEREICHE & UTILITIES */
+.text-magenta {
+    color: var(--crm-accent-magenta) !important;
 }
 
-.btn-magenta {
-    background-color: #ff007f !important;
-    color: #ffffff !important;
-    transition: background-color 0.2s ease;
-    font-weight: 700;
+.lock-overlay {
+    background-color: #ffffff;
+    border: 2px dashed var(--crm-border-color);
+    border-radius: 8px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    box-shadow: var(--crm-shadow-sm);
 }
-
-.btn-magenta:hover {
-    background-color: #e60072 !important;
-}
-
-.table-crm {
-    color: #e2e8f0;
-}
-
-.table-crm th {
-    background-color: #0f172a;
-    color: #ff007f;
-}
-
-.table-crm tbody tr {
-    transition: background-color 0.15s ease;
-}
-
-.table-crm tbody tr:hover {
-    background-color: #243249 !important;
-}
-
-.badge {
-    padding: 0.5em 0.75em;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-}
-

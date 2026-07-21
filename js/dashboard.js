@@ -142,16 +142,66 @@ function uploadImageAsset() {
 /**
  * Führt den Login-Vorgang auf der Anmeldeseite aus
  */
+// EXAKTE ZEILEN-ANPASSUNG FÜR LOGIN-ROUTING IN JS/DASHBOARD.JS
 function performLogin() {
     const u = document.getElementById("username").value;
     const p = document.getElementById("password").value;
     google.script.run.withSuccessHandler(function(res) {
         if (res.success) {
-            window.location.href = ScriptApp.getService().getUrl() + "?page=dashboard";
+            window.location.href = "https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec?page=dashboard";
         } else {
             const ab = document.getElementById("alertBox");
             ab.textContent = res.message;
             ab.classList.remove("d-none");
         }
     }).checkAuthentication(u, p);
+}
+
+function checkJobsLock() {
+    const password = prompt("Bitte Passwort für den Bereich Stellenangebote eingeben:");
+    if (!password) return;
+    
+    google.script.run.withSuccessHandler(function(res) {
+        if (res.success) {
+            document.getElementById("jobsLockOverlay").classList.add("d-none");
+            document.getElementById("jobsContent").classList.remove("d-none");
+            loadLiveJobs();
+        } else {
+            alert("Falsches Passwort!");
+        }
+    }).verifyJobsAccess(password);
+}
+
+function logout() {
+    google.script.run.withSuccessHandler(function() {
+        // Lädt die Basis-URL ohne Parameter (führt direkt zur Login.html)
+        window.location.href = "<?!= ScriptApp.getService().getUrl() ?>";
+    }).performLogoutBackend();
+}
+
+function sendeVinylEmail(firmaBand, projektname, name, email, phone, zusammenfassung, dateiLink, transferLink, message) {
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec?page=dashboard";
+  
+  const htmlBody = `
+    <div style="font-family: Arial, sans-serif; max-width: 680px; border: 2px solid #e60072; padding: 25px; border-radius: 8px; background-color: #ffffff; color: #111111;">
+      <h2 style="color: #e60072; border-bottom: 2px solid #e60072; padding-bottom: 12px;">Neue Vinyl-Spezifikationsanfrage</h2>
+      <p><strong>Kunde:</strong> ${name} | <strong>Firma/Band:</strong> ${firmaBand || "-"}</p>
+      <p><strong>Projekt:</strong> ${projektname || "-"} | <strong>E-Mail:</strong> ${email}</p>
+      <p><strong>Telefon:</strong> ${phone || "-"}</p>
+      <h3>Spezifizierte Komponenten:</h3>
+      <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px; white-space: pre-wrap;">${zusammenfassung}</div>
+      <h3>Assets & Links:</h3>
+      <p>Drive: ${dateiLink ? `<a href="${dateiLink}">Datei öffnen</a>` : "Keine"} | Transfer: ${transferLink ? `<a href="${transferLink}">Link öffnen</a>` : "Kein"}</p>
+      ${message ? `<p><strong>Anmerkungen:</strong><br>${message}</p>` : ''}
+      <div style="margin-top: 25px; text-align: center;">
+        <a href="${webAppUrl}" style="background-color: #e60072; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">Zum Dashboard</a>
+      </div>
+    </div>
+  `;
+
+  MailApp.sendEmail({ 
+    to: EMAIL_VINYL, 
+    subject: `CRM [Vinyl]: ${projektname || "Neuer Auftrag"} - ${name}`, 
+    htmlBody: htmlBody 
+  });
 }

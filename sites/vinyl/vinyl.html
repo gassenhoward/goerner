@@ -102,7 +102,7 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-7 col-lg-8 hero-text-entry">
+                <div class="col-12 col-md-7 col-lg-8 hero-text-entry text-center text-md-start">
                     <span class="text-magenta text-uppercase fw-bold tracking-wider">Spezialgebiet</span>
                     <h1 class="display-3 fw-bold mb-3 mt-2">
                         Vinyl <span class="text-magenta">Verpackungen</span>
@@ -112,18 +112,14 @@
                     <p class="lead mb-4 text-secondary-light">Wir fertigen High-End Tonträgerverpackungen für Musiker,
                         Independent-Labels und Großauflagen. Vom authentischen Kraftkarton bis hin zum edlen Gatefold –
                         wir bringen Ihre Releases im perfekten Rahmen heraus.</p>
-                    <div class="d-flex flex-column flex-sm-row gap-3">
-                        <a href="formate.html" class="btn btn-magenta px-4 py-2 fw-semibold">Formate & Innentaschen</a>
-                        <a href="../produktion/weiterverarbeitung.html#veredelung"
-                            class="btn btn-outline-light px-4 py-2">Oberflächen-Veredelung</a>
+                    <div
+                        class="d-flex flex-column flex-sm-row justify-content-center justify-content-md-start align-items-center gap-3 mt-4">
+                        <a href="#vinyl-konfigurator"
+                            class="btn btn-magenta px-4 py-2.5 fw-bold text-uppercase tracking-wider shadow-sm">
+                            Vinyl Konfiguration
+                        </a>
+                        <a href="formate.html" class="btn btn-outline-light px-4 py-2">Formate & Innentaschen</a>
                     </div>
-                </div>
-
-                <div class="mt-4">
-                    <a href="#vinylContactForm"
-                        class="btn btn-magenta px-4 py-2.5 fw-bold text-uppercase tracking-wider shadow-sm">
-                        Direkt zum Konfigurator ➔
-                    </a>
                 </div>
 
             </div>
@@ -274,7 +270,7 @@
     </section>
 
     <!-- ==========================================================================
-     CI-KONFORMER MULTI-PRODUKT KONFIGURATOR RASTER (vinyl.html)
+     CI-KONFORMER MULTI-PRODUKT KONFIGURATOR RASTER
      ========================================================================== -->
     <section id="vinyl-konfigurator" class="py-5 bg-light text-dark border-top border-light">
         <div class="container py-4">
@@ -320,82 +316,125 @@
                             <div>
                                 <label>Grammatur</label>
                                 <select id="configGrammatur" class="form-select">
-                                    <!-- Wird dynamisch befüllt -->
+                                    <!-- Dynamisch befüllt -->
                                 </select>
                             </div>
                         </div>
 
-                        <div class="form-grid-inner two-col mb-3">
-                            <div>
-                                <label>Farbigkeit</label>
-                                <select id="configFarbe" class="form-select" onchange="toggleSonderfarbeField()">
-                                    <option value="4/4-farbig">4/4-farbig</option>
-                                    <option value="1/1-farbig">1/1-farbig</option>
-                                    <option value="Sonderfarbe">Sonderfarbe</option>
-                                </select>
+                        <!-- FARBIGKEIT -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Farbigkeit</label>
+                            <div class="d-flex flex-wrap gap-2 mb-2" id="farbeKachelnGroup">
+                                <input type="checkbox" class="btn-check" id="chk_farbe_4c" autocomplete="off" checked
+                                    onchange="handleFarbigkeitToggle('chk_farbe_4c')">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_farbe_4c">4/4-farbig</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_farbe_1c" autocomplete="off"
+                                    onchange="handleFarbigkeitToggle('chk_farbe_1c')">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_farbe_1c">1/1-farbig</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_farbe_sonder" autocomplete="off"
+                                    onchange="toggleSonderfarbeField()">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_farbe_sonder">Sonderfarbe</label>
                             </div>
-                            <div class="d-none" id="sonderfarbeWrapper">
-                                <label>Sonderfarbe Details</label>
+                            <div class="d-none mt-2" id="sonderfarbeWrapper">
+                                <label class="form-label small text-muted">Sonderfarbe Details</label>
                                 <input type="text" id="configSonderfarbeDetails" class="form-control"
-                                    placeholder="HKS / Pantone">
+                                    placeholder="z. B. HKS 13 K / Pantone 185 C">
+                            </div>
+                        </div>
+
+                        <!-- INNENDRUCK -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Innendruck</label>
+                            <div class="d-flex flex-wrap gap-2 mb-2" id="innendruckKachelnGroup">
+                                <input type="checkbox" class="btn-check" id="chk_innendruck_kein" autocomplete="off"
+                                    checked onchange="handleInnendruckToggle('chk_innendruck_kein')">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_innendruck_kein">Kein Innendruck</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_innendruck_4c" autocomplete="off"
+                                    onchange="handleInnendruckToggle('chk_innendruck_4c')">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_innendruck_4c">4/4-farbig</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_innendruck_1c" autocomplete="off"
+                                    onchange="handleInnendruckToggle('chk_innendruck_1c')">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_innendruck_1c">1/1-farbig</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_innendruck_sonder" autocomplete="off"
+                                    onchange="toggleInnendruckSonderfarbeField()">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_innendruck_sonder">Sonderfarbe</label>
+                            </div>
+                            <div class="d-none mt-2" id="innendruckSonderfarbeWrapper">
+                                <label class="form-label small text-muted">Innendruck Sonderfarbe Details</label>
+                                <input type="text" id="configInnendruckSonderfarbeDetails" class="form-control"
+                                    placeholder="z. B. HKS 13 K / Pantone 185 C">
+                            </div>
+                        </div>
+
+                        <!-- DRUCKVERARBEITUNG -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase">Druckverarbeitung (Mehrfachauswahl
+                                möglich)</label>
+                            <div class="d-flex flex-wrap gap-2 mb-2" id="verarbeitungKachelnGroup">
+                                <input type="checkbox" class="btn-check" id="chk_verarb_heissfolie" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_verarb_heissfolie">Heißfolienprägung</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_verarb_lack" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_verarb_lack">Partielle Lackierung</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_verarb_blind" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_verarb_blind">Blindprägung</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_verarb_stanzung" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_verarb_stanzung">Stanzung</label>
+
+                                <input type="checkbox" class="btn-check" id="chk_verarb_insideout" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm fw-semibold"
+                                    for="chk_verarb_insideout">Inside Out</label>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label>Innendruck</label>
-                            <select id="configInnendruck" class="form-select">
-                                <option value="Kein Innendruck">Kein Innendruck</option>
-                                <option value="4/4-farbig">4/4-farbig</option>
-                                <option value="1/1-farbig">1/1-farbig</option>
-                                <option value="Sonderfarbe">Sonderfarbe</option>
+                            <label>Lack / Cellophanierung</label>
+                            <select id="configLackCello" class="form-select">
+                                <option value="Keine">Keine</option>
+                                <option value="Dispersionslack glanz">Dispersionslack glanz</option>
+                                <option value="Dispersionslack matt">Dispersionslack matt</option>
+                                <option value="Cellophanierung glanz">Cellophanierung glanz</option>
+                                <option value="Cellophanierung matt (kratzfest)">Cellophanierung matt (kratzfest)
+                                </option>
                             </select>
                         </div>
 
-                        <div class="form-grid-inner two-col mb-3">
-                            <div>
-                                <label>Druckverarbeitung</label>
-                                <select id="configVerarbeitung" class="form-select">
-                                    <option value="Keine">Keine</option>
-                                    <option value="Heißfolienprägung">Heißfolienprägung</option>
-                                    <option value="Partielle Lackierung">Partielle Lackierung</option>
-                                    <option value="Blindprägung">Blindprägung</option>
-                                    <option value="Stanzung">Stanzung</option>
-                                    <option value="Inside Out">Inside Out</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label>Lack / Cellophanierung</label>
-                                <select id="configLackCello" class="form-select">
-                                    <option value="Keine">Keine</option>
-                                    <option value="Dispersionslack glanz">Dispersionslack glanz</option>
-                                    <option value="Dispersionslack matt">Dispersionslack matt</option>
-                                    <option value="Cellophanierung glanz">Cellophanierung glanz</option>
-                                    <option value="Cellophanierung matt (kratzfest)">Cellophanierung matt (kratzfest)
-                                    </option>
-                                </select>
-                            </div>
+                        <div class="mb-3">
+                            <label>Mittellöcher</label>
+                            <select id="configLoch" class="form-select" onchange="handleHoleSelectionChange()">
+                                <option value="Automatisch optimiert">Automatisch optimiert</option>
+                                <option value="Zentriert">Zentriert</option>
+                                <option value="Keine Mittellöcher">Keine Mittellöcher</option>
+                            </select>
                         </div>
 
-                        <!-- Mittellöcher & Positionierung -->
-                    <div class="mb-3">
-                        <label>Mittellöcher</label>
-                        <select id="configLoch" class="form-select" onchange="handleHoleSelectionChange()">
-                            <option value="Automatisch optimiert">Automatisch optimiert</option>
-                            <option value="Zentriert">Zentriert</option>
-                            <option value="Keine Mittellöcher">Keine Mittellöcher</option>
-                        </select>
-                    </div>
-
-                    <!-- Reaktiver Abweichungs-Hinweis (Standardmäßig unsichtbar) -->
-                    <div id="holeWarningContainer" class="p-3 mb-4 rounded bg-light border border-warning d-none">
-                        <p id="holeWarningText" class="small text-dark mb-2 fw-semibold"></p>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="configLochBestaetigung">
-                            <label class="form-check-label small text-dark fw-bold" for="configLochBestaetigung">
-                                Abweichung ausdrücklich gewünscht
-                            </label>
+                        <div id="holeWarningContainer" class="p-3 mb-4 rounded bg-light border border-warning d-none">
+                            <p id="holeWarningText" class="small text-dark mb-2 fw-semibold"></p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="configLochBestaetigung">
+                                <label class="form-check-label small text-dark fw-bold" for="configLochBestaetigung">
+                                    Abweichung ausdrücklich gewünscht
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
                         <button type="button" class="btn btn-outline-magenta w-100 fw-bold"
                             onclick="addProductToBasket()">
@@ -403,13 +442,13 @@
                         </button>
                     </div>
 
-                    <!-- RECHTER BEREICH: LIVE-WARENKORB & KONTAKTDATEN (Gleich lang über Flex-Kopplung) -->
+                    <!-- RECHTER BEREICH: LIVE-WARENKORB & KONTAKTDATEN -->
                     <div class="card-panel-config-right-wrapper">
-                        <form id="vinylContactForm" method="POST" action="https://script.google.com/macros/s/AKfycbxfZGd4rtD365-KvZ6ySFLd66BYicQBrOp_BBTe03XNc0u3ZB5X6Ub6HNU9KPqvzK1k/exec"
+                        <form id="vinylContactForm" method="POST"
+                            action="https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec"
                             class="h-100 d-flex flex-column">
                             <input type="hidden" name="formType" value="vinyl">
 
-                            <!-- Live-Warenkorb -->
                             <div class="card-panel-basket mb-4">
                                 <h3 class="fs-5 text-dark fw-bold mb-3">Ihre zusammengestellte Anfrage</h3>
                                 <div id="basketList" class="list-group mb-0">
@@ -418,11 +457,10 @@
                                 </div>
                             </div>
 
-                            <!-- Kontaktdaten -->
                             <div class="card-panel-contact mt-auto">
                                 <h3 class="fs-5 text-magenta fw-bold mb-3 pb-2 border-bottom border-light">Kontaktdaten
-                                </h3>
-                                <div class="form-grid-inner mb-4">
+                                    & Druckdaten</h3>
+                                <div class="form-grid-inner mb-3">
                                     <div>
                                         <label>Firma / Band</label>
                                         <input type="text" name="firmaBand" class="form-control" required>
@@ -444,9 +482,34 @@
                                         <input type="text" name="phone" class="form-control">
                                     </div>
                                 </div>
+
+                                <!-- FILE UPLOAD MIT ABSOLUT INLINE PLATZIERTEM BUTTON (X) -->
+                                <div class="mb-3">
+                                    <label>Druckdatei direkt hochladen (max. 10 MB)</label>
+                                    <div class="position-relative d-flex align-items-center">
+                                        <input type="file" id="vFile" class="form-control pe-5"
+                                            accept=".pdf,.zip,.rar,.png,.jpg,.jpeg" onchange="toggleFileClearBtn()">
+                                        <button type="button" id="vFileClearBtn" class="btn-file-clear d-none"
+                                            onclick="clearFileInput()" title="Datei entfernen">✕</button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label>Oder Download-Link (WeTransfer / Dropbox / Google Drive)</label>
+                                    <input type="url" name="datenlink" id="configDatenlink" class="form-control"
+                                        placeholder="https://wetransfer.com/downloads/...">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label>Anmerkungen / Wünsche</label>
+                                    <textarea name="message" id="configMessage" class="form-control" rows="3"
+                                        placeholder="Zusätzliche Wünsche, Sonderformate oder Fragen..."></textarea>
+                                </div>
+
                                 <button type="submit" id="vSubmitBtn"
-                                    class="btn btn-magenta w-100 py-3 fw-bold text-uppercase">Gesamtanfrage
-                                    absenden</button>
+                                    class="btn btn-magenta w-100 py-3 fw-bold text-uppercase">
+                                    Gesamtanfrage absenden
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -454,11 +517,7 @@
                 </div>
             </div>
         </div>
-
-        
     </section>
-    
-   
 
     <div class="modal fade" id="thankYouModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered px-3">
@@ -480,6 +539,49 @@
             </div>
         </div>
     </div>
+
+    <section class="pt-2 pb-5 bg-light text-dark border-top border-light">
+        <div class="container pt-2 pb-4">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10">
+                    <div class="p-3 rounded-4 border border-secondary shadow-sm bg-white">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-7 text-center text-md-start">
+                                <span class="text-magenta text-uppercase fw-bold tracking-wider small">Noch Fragen?</span>
+                                <h2 class="h2 fw-bold mt-3 mb-3">Wir sind für Ihre Vinyl-Ideen da.</h2>
+                                <p class="text-secondary mb-3">Haben Sie Fragen zur Produktion oder Verpackung? Kontaktieren Sie unser Vinyl-Team direkt per E-Mail oder Telefon.</p>
+                                <p class="small text-muted mb-0">Wir prüfen Ihre Anfrage gern schnell und senden Ihnen kurzfristig passende Druck- und Verpackungslösungen.</p>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="row row-cols-1 g-3">
+                                    <div class="col">
+                                        <a href="tel:+4937152926" class="hover-magenta d-flex align-items-center justify-content-between gap-3 p-3 rounded-4 border border-secondary text-dark text-decoration-none shadow-sm bg-white">
+                                            <div>
+                                                <div class="fs-3 text-magenta">📞</div>
+                                                <div class="fw-bold">Telefon</div>
+                                                <div class="small text-secondary">Direkt anrufen</div>
+                                            </div>
+                                            <div class="fw-bold fs-5">+49 371 52926</div>
+                                        </a>
+                                    </div>
+                                    <div class="col">
+                                        <a href="mailto:vinyl@druckerei-goerner.de" class="hover-magenta d-flex align-items-center justify-content-between gap-3 p-3 rounded-4 border border-secondary text-dark text-decoration-none shadow-sm bg-white">
+                                            <div>
+                                                <div class="fs-3 text-magenta">✉️</div>
+                                                <div class="fw-bold">E-Mail</div>
+                                                <div class="small text-secondary">Nachricht senden</div>
+                                            </div>
+                                            <div class="fw-bold text-end fs-6">vinyl@druckerei-goerner.de</div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <footer class="bg-black text-secondary py-4 fs-6 border-top border-secondary-dark">
         <div class="container text-center text-md-start">
