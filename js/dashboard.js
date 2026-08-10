@@ -144,10 +144,11 @@ function uploadImageAsset() {
  */
 // EXAKTE ZEILEN-ANPASSUNG FÜR LOGIN-ROUTING IN JS/DASHBOARD.JS
 function performLogin() {
-    const u = document.getElementById("username").value;
-    const p = document.getElementById("password").value;
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
+    
     google.script.run.withSuccessHandler(function(res) {
-        if (res.success) {
+        if (res && res.success) {
             window.location.href = "https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec?page=dashboard";
         } else {
             const ab = document.getElementById("alertBox");
