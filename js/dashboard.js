@@ -3,7 +3,6 @@
 // ==========================================================================
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Prüfen, ob wir uns auf dem Dashboard-Panel befinden (Vermeidung von Fehlern auf Login-Seiten)
     if (document.getElementById("requestsTable") || document.getElementById("panel-jobs")) {
         initDashboard();
     }
@@ -18,31 +17,40 @@ function initDashboard() {
 }
 
 /**
- * Holt die letzten 50 Formularanfragen aus Google Sheets über das Backend
+ * Holt die Anfragen über die PHP/MySQL-Schnittstelle
  */
 function loadRequests() {
-    google.script.run.withSuccessHandler(function(data) {
-        const tbody = document.querySelector("#requestsTable tbody");
-        if (!tbody) return;
-        
-        if (data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Keine Anfragen vorhanden.</td></tr>';
-            return;
-        }
-        tbody.innerHTML = data.map(r => `
-            <tr>
-                <td>${r.timestamp}</td>
-                <td><strong>${r.kunde}</strong></td>
-                <td>${r.projekt}</td>
-                <td class="small text-white-50" style="white-space:pre-wrap;">${r.zusammenfassung}</td>
-                <td><span class="badge ${r.status === 'Neu' ? 'bg-danger' : 'bg-warning'}">${r.status}</span></td>
-            </tr>
-        `).join('');
-    }).getFormRequests();
+    fetch('/api/index.php?action=getRequests')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector("#requestsTable tbody");
+            if (!tbody) return;
+            
+            if (!Array.isArray(data) || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Keine Anfragen vorhanden.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(r => `
+                <tr>
+                    <td><span class="text-white-50 small">${r.timestamp}</span></td>
+                    <td><strong class="text-white">${r.kunde}</strong></td>
+                    <td><span class="text-info">${r.projekt || '-'}</span></td>
+                    <td><div class="small text-light p-2 rounded" style="white-space: pre-wrap; line-height: 1.4; background-color: #0f172a; border: 1px solid #334155;">${r.zusammenfassung || '-'}</div></td>
+                    <td><span class="badge ${r.status === 'Neu' ? 'bg-danger' : 'bg-warning'}">${r.status}</span></td>
+                </tr>
+            `).join('');
+        })
+        .catch(err => {
+            const tbody = document.querySelector("#requestsTable tbody");
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-4">Fehler beim Laden der Datenbank-Daten.</td></tr>';
+            }
+        });
 }
 
 /**
- * Übermittelt ein neues Stellenangebot an die Backend-Engine
+ * Übermittelt ein neues Stellenangebot an die MySQL-Datenbank
  */
 function submitJob() {
     const t = document.getElementById("jobTitle").value;
@@ -54,72 +62,90 @@ function submitJob() {
         alert("Bitte Titel und Beschreibung ausfüllen.");
         return;
     }
+
+    const payload = {
+        action: "saveJob",
+        title: t,
+        department: d,
+        type: ty,
+        description: de
+    };
     
-    google.script.run.withSuccessHandler(function(res) {
+    fetch('/api/index.php', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(res => {
         const alertBox = document.getElementById("jobAlert");
-        alertBox.className = "alert " + (res.success ? "alert-success" : "alert-danger");
-        alertBox.textContent = res.message;
+        alertBox.className = "alert " + (res.erfolg ? "alert-success" : "alert-danger");
+        alertBox.textContent = res.meldung;
         alertBox.classList.remove("d-none");
-        if (res.success) {
-            // Felder leeren und Live-Liste aktualisieren
+        if (res.erfolg) {
             document.getElementById("jobTitle").value = "";
             document.getElementById("jobDesc").value = "";
             loadLiveJobs();
         }
-    }).saveNewJobOffer(t, d, ty, de);
+    })
+    .catch(() => alert("Fehler beim Speichern des Stellenangebots."));
 }
 
 /**
- * Lädt die aktiven Live-Stellenangebote asynchron in die rechte Kontroll-Spalte
+ * Lädt die aktiven Stellenangebote aus der MySQL-Datenbank
  */
 function loadLiveJobs() {
-    google.script.run.withSuccessHandler(function(data) {
-        const jobsContainer = document.getElementById("panel-jobs");
-        if (!jobsContainer) return;
+    fetch('/api/index.php?action=getJobs')
+        .then(response => response.json())
+        .then(data => {
+            const list = document.getElementById("liveJobsList");
+            if (!list) return;
 
-        let liveContainer = document.getElementById("liveJobsContainer");
-        if (!liveContainer) {
-            liveContainer = document.createElement("div");
-            liveContainer.id = "liveJobsContainer";
-            liveContainer.className = "card-panel p-4 mt-4";
-            liveContainer.innerHTML = '<h3>Aktive Live-Angebote (Rechte Spalte)</h3><div id="liveJobsList" class="list-group"></div>';
-            jobsContainer.appendChild(liveContainer);
-        }
-        
-        const list = document.getElementById("liveJobsList");
-        if (data.length === 0) {
-            list.innerHTML = '<p class="text-muted small">Keine aktiven Angebote in der Tabelle.</p>';
-            return;
-        }
-        
-        list.innerHTML = data.map(j => `
-            <div class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center mb-2">
-                <div>
-                    <h5 class="mb-1">${j.titel}</h5>
-                    <small class="text-muted">${j.abteilung} · ${j.art}</small>
+            if (!Array.isArray(data) || data.length === 0) {
+                list.innerHTML = '<p class="text-muted small text-center my-3">Keine aktiven Angebote auf der Live-Webseite.</p>';
+                return;
+            }
+            
+            list.innerHTML = data.map(j => `
+                <div class="list-group-item bg-dark text-white border-secondary d-flex justify-content-between align-items-center p-3 mb-2">
+                    <div>
+                        <h6 class="mb-1 fw-bold text-magenta">${j.titel}</h6>
+                        <small class="text-white-50">${j.abteilung} · ${j.art}</small>
+                    </div>
+                    <button onclick="removeJobLive('${j.rowId}')" class="btn btn-sm btn-outline-danger px-3">Entfernen</button>
                 </div>
-                <button onclick="removeJobLive('${j.rowId}')" class="btn btn-sm btn-outline-danger">Entfernen</button>
-            </div>
-        `).join('');
-    }).getLiveJobsBackend();
+            `).join('');
+        })
+        .catch(() => {
+            const list = document.getElementById("liveJobsList");
+            if (list) list.innerHTML = '<p class="text-danger small text-center">Fehler beim Laden der Stellenangebote.</p>';
+        });
 }
 
 /**
- * Führt den Soft-Delete (Mutation auf "Inaktiv") aus
+ * Deaktiviert ein Stellenangebot in der MySQL-Datenbank
  */
 function removeJobLive(rowId) {
     if (!confirm("Möchten Sie dieses Stellenangebot wirklich live entfernen?")) return;
-    google.script.run.withSuccessHandler(function(res) {
-        if (res.success) {
+    
+    fetch('/api/index.php', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "deleteJob", id: rowId })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res.erfolg) {
             loadLiveJobs();
         } else {
-            alert("Fehler beim Löschen: " + res.message);
+            alert("Fehler beim Löschen: " + res.meldung);
         }
-    }).deleteJobOfferBackend(rowId);
+    })
+    .catch(() => alert("Fehler bei der Verbindung zum Server."));
 }
 
 /**
- * Synchronisiert Webseiten-Assets mit Google Drive
+ * Synchronisiert Webseiten-Assets mit dem lokalen Webserver-Speicher
  */
 function uploadImageAsset() {
     const fileInput = document.getElementById("imageFile");
@@ -130,79 +156,58 @@ function uploadImageAsset() {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function() {
-        google.script.run.withSuccessHandler(function(res) {
+        fetch('/api/index.php', {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: "uploadAsset",
+                fileData: reader.result,
+                fileName: file.name,
+                targetId: targetId
+            })
+        })
+        .then(res => res.json())
+        .then(res => {
             const alertBox = document.getElementById("imageAlert");
-            alertBox.className = "alert " + (res.success ? "alert-success" : "alert-danger");
-            alertBox.textContent = res.success ? "Asset erfolgreich im Google Drive aktualisiert!" : res.message;
+            alertBox.className = "alert " + (res.erfolg ? "alert-success" : "alert-danger");
+            alertBox.textContent = res.erfolg ? "Asset erfolgreich aktualisiert!" : res.meldung;
             alertBox.classList.remove("d-none");
-        }).updateCrmImage(reader.result, file.name, targetId);
+        })
+        .catch(() => alert("Fehler beim Datei-Upload."));
     };
 }
 
 /**
- * Führt den Login-Vorgang auf der Anmeldeseite aus
+ * Führt den Login-Vorgang über die PHP-Session aus
  */
-// EXAKTE ZEILEN-ANPASSUNG FÜR LOGIN-ROUTING IN JS/DASHBOARD.JS
 function performLogin() {
     const u = document.getElementById("username").value.trim();
     const p = document.getElementById("password").value.trim();
     
-    google.script.run.withSuccessHandler(function(res) {
-        if (res && res.success) {
-            window.location.href = "https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec?page=dashboard";
+    fetch('/api/index.php', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "login", username: u, password: p })
+    })
+    .then(res => res.json())
+    .then(res => {
+        if (res && res.erfolg) {
+            window.location.href = "/Dashboard.html";
         } else {
             const ab = document.getElementById("alertBox");
-            ab.textContent = res.message;
+            ab.textContent = res.meldung;
             ab.classList.remove("d-none");
         }
-    }).checkAuthentication(u, p);
+    })
+    .catch(() => alert("Login-Server nicht erreichbar."));
 }
 
-function checkJobsLock() {
-    const password = prompt("Bitte Passwort für den Bereich Stellenangebote eingeben:");
-    if (!password) return;
-    
-    google.script.run.withSuccessHandler(function(res) {
-        if (res.success) {
-            document.getElementById("jobsLockOverlay").classList.add("d-none");
-            document.getElementById("jobsContent").classList.remove("d-none");
-            loadLiveJobs();
-        } else {
-            alert("Falsches Passwort!");
-        }
-    }).verifyJobsAccess(password);
-}
-
+/**
+ * Bricht die PHP-Session ab
+ */
 function logout() {
-    google.script.run.withSuccessHandler(function() {
-        // Lädt die Basis-URL ohne Parameter (führt direkt zur Login.html)
-        window.location.href = "<?!= ScriptApp.getService().getUrl() ?>";
-    }).performLogoutBackend();
-}
-
-function sendeVinylEmail(firmaBand, projektname, name, email, phone, zusammenfassung, dateiLink, transferLink, message) {
-  const webAppUrl = "https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec?page=dashboard";
-  
-  const htmlBody = `
-    <div style="font-family: Arial, sans-serif; max-width: 680px; border: 2px solid #e60072; padding: 25px; border-radius: 8px; background-color: #ffffff; color: #111111;">
-      <h2 style="color: #e60072; border-bottom: 2px solid #e60072; padding-bottom: 12px;">Neue Vinyl-Spezifikationsanfrage</h2>
-      <p><strong>Kunde:</strong> ${name} | <strong>Firma/Band:</strong> ${firmaBand || "-"}</p>
-      <p><strong>Projekt:</strong> ${projektname || "-"} | <strong>E-Mail:</strong> ${email}</p>
-      <p><strong>Telefon:</strong> ${phone || "-"}</p>
-      <h3>Spezifizierte Komponenten:</h3>
-      <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px; white-space: pre-wrap;">${zusammenfassung}</div>
-      <h3>Assets & Links:</h3>
-      <p>Drive: ${dateiLink ? `<a href="${dateiLink}">Datei öffnen</a>` : "Keine"} | Transfer: ${transferLink ? `<a href="${transferLink}">Link öffnen</a>` : "Kein"}</p>
-      ${message ? `<p><strong>Anmerkungen:</strong><br>${message}</p>` : ''}
-      <div style="margin-top: 25px; text-align: center;">
-        <a href="${webAppUrl}" style="background-color: #e60072; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">Zum Dashboard</a>
-      </div>
-    </div>
-  `;
-
-  MailApp.sendEmail({ 
-    to: EMAIL_VINYL, 
-    subject: `CRM [Vinyl]: ${projektname || "Neuer Auftrag"} - ${name}`, 
-    htmlBody: htmlBody 
-  });
+    fetch('/api/index.php?action=logout')
+        .then(() => {
+            window.location.href = "/Login.html";
+        });
 }

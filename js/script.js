@@ -25,20 +25,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             }
         }
-        
+
         if (workstationWrapper) { workstationWrapper.classList.add("loaded"); }
         if (packagingStage) { packagingStage.classList.add("loaded"); }
         if (heroText) { heroText.classList.add("visible"); }
-        
+
         const photoStack = document.getElementById("historicalPhotoStack");
         const btnNext = document.getElementById("btnNextPhoto");
-        
+
         if (photoStack) {
             let isRotating = false;
 
             function rotateChronikStack() {
                 if (isRotating) return;
-                
+
                 const cards = Array.from(photoStack.querySelectorAll(".historical-photo-card"));
                 if (cards.length === 0) return;
 
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }, 650);
             }
 
-            photoStack.addEventListener("click", function(e) {
+            photoStack.addEventListener("click", function (e) {
                 e.preventDefault();
                 rotateChronikStack();
             });
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
     handleProductTypeChange();
 
     // ==========================================================================
-    // 4. AJAX FORMULAR-VERSAND AN DAS CRM BACKEND
+    // 4. AJAX FORMULAR-VERSAND (VINYL KONFIGURATOR -> PHP API)
     // ==========================================================================
     const vinylForm = document.getElementById("vinylContactForm");
     const vSubmitBtn = document.getElementById("vSubmitBtn");
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             const gesamtStueckzahl = basketItems.reduce((acc, curr) => acc + parseInt(curr.amount, 10), 0).toString();
-            
+
             let kundenNachricht = formData.get("message") || "";
             const abweichungen = basketItems.filter(i => i.hinweis).map(i => `${i.pType}: ${i.hinweis}`);
             if (abweichungen.length > 0) {
@@ -183,34 +183,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 phone: formData.get("phone") || "",
                 stueckzahl: gesamtStueckzahl,
                 projektZusammenfassung: crmZeilenArray.join("\n"),
-                datenlink: formData.get("datenlink") || "", 
+                datenlink: formData.get("datenlink") || "",
                 message: kundenNachricht
             };
 
             function sendData(payload) {
-                fetch(vinylForm.action, {
+                const apiPath = window.location.pathname.includes('/sites/') ? '../../api/index.php' : 'api/index.php';
+                fetch(apiPath, {
                     method: "POST",
-                    redirect: "follow",
-                    body: JSON.stringify(payload),
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.erfolg === true) {
                         if (typeof bootstrap !== 'undefined') {
                             const thankYouModalEl = document.getElementById('thankYouModal');
-                            const thankYouModal = new bootstrap.Modal(thankYouModalEl);
-                            thankYouModal.show();
+                            if (thankYouModalEl) {
+                                const thankYouModal = new bootstrap.Modal(thankYouModalEl);
+                                thankYouModal.show();
+                            }
                         } else {
                             alert("Danke! Ihre Spezifikations-Anfrage wurde erfolgreich übermittelt.");
                         }
-                        
                         vinylForm.reset();
-                        clearFileInput();
                         basketItems = [];
                         renderBasket();
-                        resetFormFields();
-                        checkHoleMatrix();
                     } else {
                         alert("CRM-Fehler: " + data.meldung);
                     }
@@ -238,6 +236,60 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 sendData(dataObject);
             }
+        });
+    }
+
+    // ==========================================================================
+    // 5. AJAX FORMULAR-VERSAND (HAUPT-KONTAKTFORMULAR index.html -> PHP API)
+    // ==========================================================================
+    const contactForm = document.getElementById("contactForm");
+    if (contactForm) {
+        contactForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById("submitBtn");
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Wird gesendet...";
+            }
+
+            const payload = {
+                formType: "kontakt",
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                subject: document.getElementById("betreff").value,
+                message: document.getElementById("nachricht").value
+            };
+
+            const apiPath = window.location.pathname.includes('/sites/') ? '../../api/index.php' : 'api/index.php';
+            fetch(apiPath, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.erfolg) {
+                    const thankYouModalEl = document.getElementById('thankYouModal');
+                    if (thankYouModalEl && typeof bootstrap !== 'undefined') {
+                        const modal = new bootstrap.Modal(thankYouModalEl);
+                        modal.show();
+                    } else {
+                        alert("Anfrage erfolgreich gesendet!");
+                    }
+                    contactForm.reset();
+                } else {
+                    alert("Fehler: " + data.meldung);
+                }
+            })
+            .catch(() => alert("Verbindungsfehler beim Senden der Kontaktanfrage."))
+            .finally(() => {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Anfrage senden";
+                }
+            });
         });
     }
 });
@@ -277,7 +329,7 @@ function handleProductTypeChange() {
     const pTypeEl = document.getElementById("configProductType");
     if (!pTypeEl) return;
     const pType = pTypeEl.value;
-    
+
     const kartonWrapper = document.getElementById("configKarton")?.closest('.form-grid-inner') || document.getElementById("configKarton")?.parentElement;
     const farbeGroup = document.getElementById("farbeKachelnGroup")?.parentElement;
     const innendruckGroup = document.getElementById("innendruckKachelnGroup")?.parentElement;
@@ -311,15 +363,15 @@ function updateGrammaturOptions() {
     const pTypeEl = document.getElementById("configProductType");
     const kartonEl = document.getElementById("configKarton");
     const grammSelect = document.getElementById("configGrammatur");
-    
+
     if (!grammSelect || !pTypeEl || !kartonEl) return;
-    
+
     const pType = pTypeEl.value;
     const karton = kartonEl.value;
     grammSelect.innerHTML = "";
-    
+
     let optionen = [];
-    
+
     if (pType === "12\" Gatefold") {
         if (karton === "Chromokarton") {
             optionen = ["300 g/m²", "350 g/m²"];
@@ -339,11 +391,11 @@ function updateGrammaturOptions() {
             optionen = ["190 g/m²"];
         }
     }
-    
+
     if (optionen.length === 0) {
         optionen = ["Keine Auswahl verfügbar"];
     }
-    
+
     optionen.forEach(val => {
         const opt = document.createElement("option");
         opt.value = val;
@@ -429,7 +481,7 @@ function getSelectedFarbeValues() {
     const selected = [];
     if (document.getElementById("chk_farbe_4c")?.checked) selected.push("4/4-farbig");
     if (document.getElementById("chk_farbe_1c")?.checked) selected.push("1/1-farbig");
-    
+
     if (document.getElementById("chk_farbe_sonder")?.checked) {
         const details = document.getElementById("configSonderfarbeDetails")?.value.trim();
         selected.push(details ? `Sonderfarbe (${details})` : "Sonderfarbe");
@@ -443,7 +495,7 @@ function getSelectedInnendruckValues() {
     const selected = [];
     if (document.getElementById("chk_innendruck_4c")?.checked) selected.push("4/4-farbig");
     if (document.getElementById("chk_innendruck_1c")?.checked) selected.push("1/1-farbig");
-    
+
     if (document.getElementById("chk_innendruck_sonder")?.checked) {
         const details = document.getElementById("configInnendruckSonderfarbeDetails")?.value.trim();
         selected.push(details ? `Sonderfarbe (${details})` : "Sonderfarbe");
@@ -514,11 +566,6 @@ function addProductToBasket() {
     resetFormFields();
 }
 
-/* ==========================================================================
-   INTERAKTIVE KACHEL-MUTEX-LOGIK (FARBIGKEIT & INNENDRUCK)
-   ========================================================================== */
-
-// --- FARBIGKEIT (1c vs. 4c exklusiv, Sonderfarbe frei) ---
 function handleFarbigkeitToggle(selectedId) {
     const chk4c = document.getElementById("chk_farbe_4c");
     const chk1c = document.getElementById("chk_farbe_1c");
@@ -530,7 +577,6 @@ function handleFarbigkeitToggle(selectedId) {
     }
 }
 
-// --- INNENDRUCK (Kein vs. 4c vs. 1c exklusiv, Sonderfarbe frei) ---
 function handleInnendruckToggle(selectedId) {
     const chkKein = document.getElementById("chk_innendruck_kein");
     const chk4c = document.getElementById("chk_innendruck_4c");
@@ -550,7 +596,7 @@ function handleInnendruckToggle(selectedId) {
 
 function resetFormFields() {
     document.querySelectorAll("#farbeKachelnGroup input[type='checkbox'], #verarbeitungKachelnGroup input[type='checkbox'], #innendruckKachelnGroup input[type='checkbox']").forEach(cb => cb.checked = false);
-    
+
     const chk4c = document.getElementById("chk_farbe_4c");
     const chkKeinInnen = document.getElementById("chk_innendruck_kein");
     if (chk4c) chk4c.checked = true;
@@ -614,9 +660,9 @@ function saveCookieConsent(acceptedType) {
 
     localStorage.setItem("goerner_cookie_consent", acceptedType);
 
-    fetch("https://script.google.com/macros/s/AKfycbwNYzte8SJqxizVJyS-cwS9UWl9RHOnP2QUg8MLd_FEmKsarvnzpgXWH3GE4FV57MJE/exec", {
+    const apiPath = window.location.pathname.includes('/sites/') ? '../../api/index.php' : 'api/index.php';
+    fetch(apiPath, {
         method: "POST",
-        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(consentData)
     });
