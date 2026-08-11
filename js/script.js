@@ -130,6 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setDefaultLackCello();
     handleProductTypeChange();
+    resetFormFields();
 
     // ==========================================================================
     // 4. AJAX FORMULAR-VERSAND (VINYL KONFIGURATOR -> PHP API)
@@ -187,14 +188,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 message: kundenNachricht
             };
 
-            function sendData(payload) {
+          function sendData(payload) {
+                // Dynamische Pfadermittlung: Aus /sites/ heraus zwei Ebenen hoch, sonst direkt api/index.php
                 const apiPath = window.location.pathname.includes('/sites/') ? '../../api/index.php' : 'api/index.php';
+                
                 fetch(apiPath, {
                     method: "POST",
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("HTTP Fehler " + response.status);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.erfolg === true) {
                         if (typeof bootstrap !== 'undefined') {
@@ -209,11 +217,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         vinylForm.reset();
                         basketItems = [];
                         renderBasket();
+                        resetFormFields();
                     } else {
                         alert("CRM-Fehler: " + data.meldung);
                     }
                 })
                 .catch(err => {
+                    console.error("CRM Fetch Error:", err);
                     alert("Verbindungsfehler zum CRM. Anfrage konnte nicht übermittelt werden.");
                 })
                 .finally(() => {
@@ -434,13 +444,15 @@ function toggleInnendruckSonderfarbeField() {
     if (!chkSonder || !wrapper) return;
 
     if (chkSonder.checked) {
-        document.getElementById("chk_innendruck_kein").checked = false;
+        const chkKein = document.getElementById("chk_innendruck_kein");
+        if (chkKein) chkKein.checked = false;
         wrapper.classList.remove("d-none");
     } else {
         wrapper.classList.add("d-none");
         const detailsInput = document.getElementById("configInnendruckSonderfarbeDetails");
         if (detailsInput) detailsInput.value = "";
     }
+    handleInnendruckToggle(null);
 }
 
 function validateStep100(input) {
@@ -581,29 +593,45 @@ function handleInnendruckToggle(selectedId) {
     const chkKein = document.getElementById("chk_innendruck_kein");
     const chk4c = document.getElementById("chk_innendruck_4c");
     const chk1c = document.getElementById("chk_innendruck_1c");
+    const chkSonder = document.getElementById("chk_innendruck_sonder");
 
-    if (selectedId === "chk_innendruck_kein" && chkKein && chkKein.checked) {
+    if (selectedId !== "chk_innendruck_kein" && selectedId !== null) {
+        if (chkKein) chkKein.checked = false;
+        if (selectedId === "chk_innendruck_4c" && chk4c && chk4c.checked && chk1c) chk1c.checked = false;
+        if (selectedId === "chk_innendruck_1c" && chk1c && chk1c.checked && chk4c) chk4c.checked = false;
+    } else if (selectedId === "chk_innendruck_kein" && chkKein && chkKein.checked) {
         if (chk4c) chk4c.checked = false;
         if (chk1c) chk1c.checked = false;
-    } else if (selectedId === "chk_innendruck_4c" && chk4c && chk4c.checked) {
-        if (chkKein) chkKein.checked = false;
-        if (chk1c) chk1c.checked = false;
-    } else if (selectedId === "chk_innendruck_1c" && chk1c && chk1c.checked) {
-        if (chkKein) chkKein.checked = false;
-        if (chk4c) chk4c.checked = false;
+        if (chkSonder) chkSonder.checked = false;
+        toggleInnendruckSonderfarbeField();
     }
+
+    const optionLabels = document.querySelectorAll("label[for='chk_innendruck_4c'], label[for='chk_innendruck_1c'], label[for='chk_innendruck_sonder']");
+    optionLabels.forEach(lbl => {
+        if (chkKein && chkKein.checked) {
+            lbl.style.opacity = "0.4";
+            lbl.style.filter = "grayscale(1)";
+        } else {
+            lbl.style.opacity = "1";
+            lbl.style.filter = "none";
+        }
+    });
 }
 
 function resetFormFields() {
     document.querySelectorAll("#farbeKachelnGroup input[type='checkbox'], #verarbeitungKachelnGroup input[type='checkbox'], #innendruckKachelnGroup input[type='checkbox']").forEach(cb => cb.checked = false);
 
-    const chk4c = document.getElementById("chk_farbe_4c");
-    const chkKeinInnen = document.getElementById("chk_innendruck_kein");
-    if (chk4c) chk4c.checked = true;
-    if (chkKeinInnen) chkKeinInnen.checked = true;
+    const sonderDetails = document.getElementById("configSonderfarbeDetails");
+    const innenSonderDetails = document.getElementById("configInnendruckSonderfarbeDetails");
+    if (sonderDetails) sonderDetails.value = "";
+    if (innenSonderDetails) innenSonderDetails.value = "";
+
+    const amountInput = document.getElementById("configAmount");
+    if (amountInput) amountInput.value = "100";
 
     toggleSonderfarbeField();
     toggleInnendruckSonderfarbeField();
+    handleInnendruckToggle(null);
     resetHoleWarningState();
     setDefaultLackCello();
 }

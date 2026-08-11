@@ -352,7 +352,7 @@
                             <label class="form-label fw-bold small text-uppercase">Innendruck</label>
                             <div class="d-flex flex-wrap gap-2 mb-2" id="innendruckKachelnGroup">
                                 <input type="checkbox" class="btn-check" id="chk_innendruck_kein" autocomplete="off"
-                                    checked onchange="handleInnendruckToggle('chk_innendruck_kein')">
+                                    onchange="handleInnendruckToggle('chk_innendruck_kein')">
                                 <label class="btn btn-outline-secondary btn-sm fw-semibold"
                                     for="chk_innendruck_kein">Kein Innendruck</label>
 
@@ -446,7 +446,6 @@
                     <div class="card-panel-config-right-wrapper">
                         <form id="vinylContactForm" method="POST" action="../../api/index.php"
                             class="h-100 d-flex flex-column">
-                            <input type="hidden" name="formType" value="vinyl">
 
                             <div class="card-panel-basket mb-4">
                                 <h3 class="fs-5 text-dark fw-bold mb-3">Ihre zusammengestellte Anfrage</h3>
