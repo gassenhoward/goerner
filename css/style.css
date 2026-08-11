@@ -1098,3 +1098,89 @@ textarea#configMessage {
     .team-split-tile { flex-direction: column !important; align-items: flex-start !important; gap: 0.75rem; }
     .team-split-tile .text-end { text-align: left !important; padding-left: 0 !important; border-left: none !important; border-top: 1px solid rgba(0, 0, 0, 0.08) !important; padding-top: 0.5rem; width: 100%; }
 }
+
+/* ==========================================================================
+   MODERN FOOTER COMPONENT
+   ========================================================================== */
+.footer-modern {
+    background: linear-gradient(180deg, #0d0d0f 0%, #050506 100%) !important;
+    color: #94a3b8 !important;
+    position: relative;
+    border-top: 1px solid rgba(255, 0, 127, 0.25) !important;
+}
+
+.footer-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--magenta-brand), transparent);
+    box-shadow: 0 0 15px var(--magenta-brand);
+}
+
+.footer-brand-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+}
+
+.footer-text {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+    color: #94a3b8 !important;
+}
+
+.footer-nav-link {
+    color: #cbd5e1 !important;
+    text-decoration: none;
+    font-size: 0.95rem !important;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-block;
+}
+
+.footer-nav-link:hover {
+    color: var(--magenta-brand) !important;
+    transform: translateX(4px);
+}
+
+.footer-social-btn {
+    background-color: rgba(255, 0, 127, 0.08);
+    border: 1px solid rgba(255, 0, 127, 0.3);
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none !important;
+}
+
+.footer-social-btn:hover {
+    background-color: var(--magenta-brand);
+    border-color: var(--magenta-brand);
+    color: #ffffff !important;
+    box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+    transform: translateY(-2px);
+}
+
+.footer-map-frame {
+    border-radius: 10px;
+    border: 1px solid #334155;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.3s ease;
+}
+
+.footer-map-frame:hover {
+    border-color: var(--magenta-brand);
+}
+
+.footer-bottom-bar {
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background-color: #030304;
+}
